@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laucher Apps</title>
+    <link rel="icon" href="https://i.ibb.co.com/1tBC2ngW/Logo-12-F8-F09.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            background: linear-gradient(to bottom, #8b0000, #330000);
+            color: white;
+        }
+
+        .swiper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, auto);
+            gap: 20px;
+            padding: 50px 20px 20px 20px;
+        }
+
+        .app-item {
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            display: block;
+            transition: opacity 0.2s;
+        }
+
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            background-color: #008080;
+            border-radius: 18px;
+            margin: 0 auto 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .search-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        /* Container untuk hasil pencarian global */
+        /* Container untuk hasil pencarian global */
+        #search-results {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #8b0000, #330000);
+            display: none;
+            z-index: 50;
+            overflow-y: auto;
+            /* Padding bawah memastikan item tidak terpotong oleh search bar */
+            padding-bottom: 120px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="swiper" id="main-swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="grid-container">
+                    <a href="../informasi.html" class="app-item">
+                        <div class="icon-box" style="background: rgb(255, 255, 255);"><img src="https://i.ibb.co.com/1tBC2ngW/Logo-12-F8-F09.png" class="app-icon"></div>
+                        <div class="label">NEWBIEFAMS APPS</div>
+                    </a>
+                    
+                </div>
+            </div>
+          <!--  <div class="swiper-slide">
+                <div class="grid-container">
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                    <a href="#" class="app-item">
+                        <div class="icon-box"><img src="https://via.placeholder.com/150" class="app-icon"></div>
+                        <div class="label">APP 17</div>
+                    </a>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <div id="search-results">
+        <div class="grid-container" id="results-grid"></div>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="Cari aplikasi...">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        const swiper = new Swiper('.swiper', { loop: false });
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('search-results');
+        const resultsGrid = document.getElementById('results-grid');
+        const allApps = Array.from(document.querySelectorAll('.swiper-slide .app-item'));
+
+        searchInput.addEventListener('input', function () {
+            const filter = this.value.toUpperCase();
+
+            if (filter.length > 0) {
+                searchResults.style.display = "block";
+                resultsGrid.innerHTML = "";
+
+                const filtered = allApps.filter(app =>
+                    app.querySelector('.label').textContent.toUpperCase().includes(filter)
+                );
+
+                filtered.forEach(app => {
+                    const clone = app.cloneNode(true);
+                    resultsGrid.appendChild(clone);
+                });
+            } else {
+                searchResults.style.display = "none";
+            }
+        });
+    </script>
+    <script>
+        /* =========================
+           NEWBIEFAMS PROTECTION
+           MOBILE SAFE VERSION
+        ========================= */
+
+        (() => {
+
+            /* =========================
+               DISABLE RIGHT CLICK
+            ========================= */
+            document.addEventListener("contextmenu", (e) => {
+                e.preventDefault();
+            });
+
+            /* =========================
+               DISABLE IMAGE DRAG
+            ========================= */
+            document.addEventListener("dragstart", (e) => {
+
+                if (e.target.tagName === "IMG") {
+                    e.preventDefault();
+                }
+
+            });
+
+            /* =========================
+               IMAGE PROTECTION
+            ========================= */
+            document.querySelectorAll("img").forEach(img => {
+
+                // Anti drag
+                img.setAttribute("draggable", "false");
+
+                // Anti select
+                img.style.userSelect = "none";
+                img.style.webkitUserSelect = "none";
+
+                // Anti long press save image
+                img.style.webkitTouchCallout = "none";
+
+            });
+
+            /* =========================
+               DISABLE SHORTCUT INSPECT
+            ========================= */
+            document.addEventListener("keydown", function (e) {
+
+                const key = e.key.toLowerCase();
+
+                // F12
+                if (e.key === "F12") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + I
+                if (e.ctrlKey && e.shiftKey && key === "i") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + J
+                if (e.ctrlKey && e.shiftKey && key === "j") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + C
+                if (e.ctrlKey && e.shiftKey && key === "c") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + U
+                if (e.ctrlKey && key === "u") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + S
+                if (e.ctrlKey && key === "s") {
+                    e.preventDefault();
+                    return false; 
+                }
+
+            }, true);
+
+
+
+            /* =========================
+               ANTI IFRAME
+            ========================= */
+            if (window.top !== window.self) {
+                document.body.innerHTML = "";
+            }
+
+            /* =========================
+               PRINTSCREEN BLUR
+            ========================= */
+            document.addEventListener("keyup", (e) => {
+
+                if (e.key === "PrintScreen") {
+
+                    document.body.style.transition = ".3s";
+                    document.body.style.filter = "blur(20px)";
+
+                    setTimeout(() => {
+                        document.body.style.filter = "blur(0)";
+                    }, 2000);
+
+                }
+
+            });
+
+            /* =========================
+               AUTO CLEAR CONSOLE
+            ========================= */
+            setInterval(() => {
+                console.clear();
+            }, 2000);
+
+        })();
+    </script>
+</body>
+
+</html>
