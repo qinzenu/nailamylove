@@ -60,7 +60,7 @@
     <link rel="icon" href="https://i.ibb.co.com/1tBC2ngW/Logo-12-F8-F09.png">
     <style>
         :root {
-            --primary: #7c5cff;
+            --primary: cyan;
             --primary2: #5865f2;
             --accent: #36ff0e;
             --bg: #05060a;
@@ -68,7 +68,7 @@
             --glass: rgba(255, 255, 255, .045);
             --glass-border: rgba(255, 255, 255, .08);
             --text: #ffffff;
-            --muted: #9aa4b2;
+            --muted: #D3D3D3;
             --shadow: 0 20px 40px rgba(0, 0, 0, .45);
             --glow: 0 0 30px rgba(124, 92, 255, .25);
         }
@@ -243,6 +243,13 @@
             transition: .3s;
         }
 
+        .input-group i {
+            color: white;
+        }
+        .input-group input::placeholder {
+    color: var(--muted); /* Sesuaikan jika ingin menggunakan warna lain, misal: #7c8598 */
+}
+
         .input-group input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 20px rgba(124, 92, 255, .18);
@@ -344,7 +351,7 @@
             margin: 15px 0;
             font-size: 14px;
             font-weight: 700;
-            color: var(--primary);
+            color: cyan;
             letter-spacing: 1px;
         }
 
@@ -960,7 +967,215 @@
         #update-text {
             white-space: pre-wrap;
         }
-    </style>
+    
+        /* =========================
+           TAMBAHAN: POSTS FEED
+           (kode asli tidak diubah)
+        ========================= */
+        /* =========================
+           POSTS FEED (pengganti RULES)
+        ========================= */
+        .posts-section {
+            margin-top: 4px;
+            margin-bottom: 22px;
+        }
+
+        .post-card {
+            position: relative;
+            border-radius: 26px;
+            margin-bottom: 18px;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg,
+                    rgba(255, 255, 255, .05),
+                    rgba(255, 255, 255, .022));
+            border: 1px solid rgba(255, 255, 255, .08);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, .28);
+            transition: transform .35s cubic-bezier(.22, 1, .36, 1), border-color .3s ease, box-shadow .3s ease;
+            /* Fix garis/seam tipis di tepi kartu akibat bug rendering Chrome saat
+               border-radius + overflow:hidden + backdrop-filter dipakai bersamaan */
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            will-change: transform;
+            backface-visibility: hidden;
+            isolation: isolate;
+        }
+
+        .post-card:hover {
+            transform: translateZ(0) translateY(-4px);
+            border-color: rgba(124, 92, 255, .25);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, .38);
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 18px 0;
+        }
+
+        .post-author-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #171b24, #0d1018);
+            border: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .post-author-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .post-author-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .post-verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #000000, #ff0000);
+            box-shadow: 0 0 8px rgba(255, 0, 0, .45);
+        }
+
+        .post-verified-badge i {
+            font-size: 8px;
+            color: #ffffff;
+        }
+
+        .post-author-role {
+            font-size: 11px;
+            color: #D3D3D3;
+            margin-top: 1px;
+        }
+
+        .post-photo-wrap {
+            margin-top: 14px;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .post-photo-track {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .post-photo-track::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .post-photo-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            overflow: hidden;
+        }
+
+        .post-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            -webkit-user-drag: none;
+        }
+
+        .post-photo-counter {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(5, 6, 10, .65);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, .15);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 20px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .post-photo-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .post-photo-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .45);
+            transition: all .25s ease;
+        }
+
+        .post-photo-dots span.active {
+            background: #fff;
+            width: 16px;
+            border-radius: 3px;
+        }
+
+        .post-body {
+            padding: 16px 18px;
+        }
+
+        .post-text {
+            font-size: 13.5px;
+            line-height: 1.75;
+            color: white;
+            white-space: pre-line;
+        }
+
+        .post-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 13px 18px;
+            border-top: 1px solid rgba(255, 255, 255, .06);
+            background: rgba(255, 255, 255, .015);
+        }
+
+        .post-footer-date {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .4px;
+            color: #D3D3D3;
+        }
+
+        .post-footer-date i {
+            color: var(--primary);
+            font-size: 11px;
+        }
+</style>
 
     <!-- =========================
          STAT POPUP (Member / Status / Version)
@@ -1878,13 +2093,38 @@
         }
 
         /* =========================
-           NAV QUICK MENU (LONG PRESS)
+           TOP-RIGHT MENU (HAMBURGER + DROPDOWN)
         ========================= */
-        .nav-quickmenu {
-            position: absolute;
-            bottom: calc(100% + 16px);
-            left: 50%;
-            transform: translate(-50%, 16px) scale(0.92);
+        .menu-toggle {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            background: rgba(15, 17, 24, 0.85);
+            backdrop-filter: blur(20px);
+            color: var(--text);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: .25s;
+        }
+
+        .menu-toggle.active,
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .menu-dropdown {
+            position: fixed;
+            top: 74px;
+            right: 18px;
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -1893,33 +2133,23 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 18px;
             padding: 8px;
-            min-width: 130px;
+            min-width: 190px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             opacity: 0;
+            transform: translateY(-12px) scale(0.94);
+            transform-origin: top right;
             pointer-events: none;
-            transform-origin: bottom center;
             transition: transform 0.3s cubic-bezier(.34, 1.56, .64, 1), opacity 0.25s ease;
             z-index: 10000;
         }
 
-        .nav-quickmenu::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 7px;
-            border-style: solid;
-            border-color: rgba(15, 17, 24, 0.95) transparent transparent transparent;
-        }
-
-        .nav-quickmenu.show {
+        .menu-dropdown.show {
             opacity: 1;
-            transform: translate(-50%, 0) scale(1);
+            transform: translateY(0) scale(1);
             pointer-events: auto;
         }
 
-        .nav-quick-item {
+        .menu-dropdown-item {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -1929,26 +2159,62 @@
             white-space: nowrap;
             background: rgba(255, 255, 255, .05);
             color: #aaa;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 12px;
-            font-size: 12.5px;
+            font-size: 13px;
             font-weight: 700;
             text-align: left;
+            text-decoration: none;
             transition: .25s;
         }
 
-        .nav-quick-item i {
-            width: 14px;
+        .menu-dropdown-item i {
+            width: 16px;
             text-align: center;
-            font-size: 12px;
+            font-size: 13px;
         }
 
-        .nav-quick-item:hover,
-        .nav-quick-item.active {
+        .menu-dropdown-item:hover,
+        .menu-dropdown-item.active {
             background: linear-gradient(135deg,
                     var(--primary),
                     var(--primary2));
             color: white;
+        }
+
+        /* =========================
+           LOGIN POPUP CLOSE BUTTON
+           (login-overlay sekarang tampil sebagai popup yang bisa
+           ditutup, dipicu saat klik menu Profil tanpa login, atau
+           saat sesi berakhir -- bukan gerbang wajib di awal lagi)
+        ========================= */
+        .login-popup-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, .1);
+            background: rgba(255, 255, 255, .05);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: .25s;
+            z-index: 5;
+        }
+
+        .login-popup-close:hover {
+            background: rgba(255, 62, 62, .18);
+            border-color: rgba(255, 62, 62, .35);
+            color: #ff6b6b;
+        }
+
+        .login-card {
+            position: relative;
         }
 
         /* Styling untuk Spinner */
@@ -3189,6 +3455,8 @@
 
     <div id="login-overlay">
         <div class="login-card">
+            <i class="fa-solid fa-xmark login-popup-close" id="login-popup-close" onclick="closeLoginPopup()"
+                title="Tutup"></i>
             <div class="login-logo">
                 <img src="https://i.ibb.co.com/vvQLChCV/icon.png" alt="Logo">
             </div>
@@ -3213,8 +3481,9 @@
                 </span>
             </button>
 
-            <p class="signup-text" style="font-size: 0.8em; margin-top: 15px; color: #666;">
-                Belum Punya Akun? <a href="https://discord.gg/9nnSBaCxMj" style="color: #007bff; text-decoration: none;">Buat Akun</a>
+            <p class="signup-text" style="font-size: 0.8em; margin-top: 15px; color: var(--muted);">
+                Belum Punya Akun? <a href="https://discord.gg/9nnSBaCxMj"
+                    style="color: #00B894; text-decoration: none;">Buat Akun</a>
             </p>
 
             <p id="error-msg" style="display:none; color: #ff3e3e; margin-top: 10px;"></p>
@@ -3296,7 +3565,7 @@
             <div class="stat-popup-header">
                 <div class="stat-popup-title">
                     <i class="fa-solid fa-clock"></i>
-                    Jadwal Status
+                    Jadwal Kerja Admin
                 </div>
                 <div class="stat-popup-close" onclick="closeStatPopup('status-popup')">
                     <i class="fa-solid fa-xmark"></i>
@@ -3356,7 +3625,7 @@
             <div id="digital-clock"></div>
 
             <div class="stats-grid">
-                <div class="stat-item stat-trigger-member"><span>126</span><label>Member</label></div>
+                <div class="stat-item stat-trigger-member"><span>54</span><label>Member</label></div>
                 <div class="stat-item stat-trigger-status"><span id="status-text">Loading...</span><label>Status</label>
                 </div>
                 <div class="stat-item stat-trigger-version"><span>Loading...</span><label>Version</label></div>
@@ -3756,6 +4025,139 @@
         </div>
 
 
+
+
+        <!-- =========================
+             TAMBAHAN: TAB POSTINGAN
+             (kode asli tidak diubah)
+        ========================== -->
+        <div class="postingan-content" style="
+    font-family: 'Inter', 'JetBrains Mono', monospace;
+    max-width: 750px;
+    margin: 40px auto;
+    padding: 0 15px;
+    color: #fff;
+    display: none;
+">
+            <!-- PEMISAH: judul section postingan -->
+            <div style="display: flex; align-items: center; gap: 10px; margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div style="background: rgba(255, 255, 255, 0.056); color: var(--primary); width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">
+                    <i class="fa-solid fa-note-sticky"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 15px; font-weight: 800; color: #fff; margin: 0; letter-spacing: 0.5px;">
+                        POSTINGAN</h3>
+                    <p style="font-size: 11.5px; color: var(--muted); margin: 2px 0 0 0;">Update & postingan terbaru
+                        dari NewbieFams</p>
+                </div>
+            </div>
+
+            <!-- POSTS FEED -->
+            <div class="posts-section">
+
+                <!--
+               
+                <div class="post-card">
+                    <div class="post-author">
+                        <img class="post-author-avatar" src="https://i.ibb.co.com/vvQLChCV/icon.png" alt="NewbieFams">
+                        <div class="post-author-meta">
+                            <div class="post-author-name">NewbieFams <span class="post-verified-badge"><i class="fa-solid fa-check"></i></span></div>
+                            <div class="post-author-role">Official Team</div>
+                        </div>
+                    </div>
+                    <div class="post-photo-wrap">
+                        <div class="post-photo-track">
+                            <div class="post-photo-slide">
+                                <img class="post-photo" src="https://i.ibb.co.com/1tBC2ngW/Logo-12-F8-F09.png" alt="Postingan NewbieFams 1">
+                            </div>
+                            <div class="post-photo-slide">
+                                <img class="post-photo" src="https://i.ibb.co.com/Sw6LrVH1/Contoh-Scroll.png" alt="Postingan NewbieFams 2">
+                            </div>
+                            <div class="post-photo-slide">
+                                <img class="post-photo" src="https://i.ibb.co.com/s9nj5WYK/image.png" alt="Postingan NewbieFams 3">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p class="post-text">Tulis caption/keterangan untuk postingan foto ini di sini.</p>
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-footer-date">
+                            <i class="fa-regular fa-calendar"></i>
+                            <span>26 Juli 2026</span>
+                        </div>
+                    </div>
+                </div>
+            -->
+
+                <!-- Contoh postingan TEKS: cuma teks, footer tanggal -->
+                <div class="post-card">
+                    <div class="post-author">
+                        <img class="post-author-avatar" src="https://i.ibb.co.com/vvQLChCV/icon.png" alt="NewbieFams">
+                        <div class="post-author-meta">
+                            <div class="post-author-name">NewbieFams <span class="post-verified-badge"><i class="fa-solid fa-check"></i></span></div>
+                            <div class="post-author-role">Official Team</div>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p class="post-text">Kata Idan, tanggal 24 hari senin OPMEM</p>
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-footer-date">
+                            <i class="fa-regular fa-calendar"></i>
+                            <span>18 Agustus 2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // =========================
+            // POST PHOTO CAROUSEL: geser (scroll-snap) untuk postingan multi-foto
+            // Dots & counter otomatis dibuat sesuai jumlah gambar di .post-photo-track
+            // =========================
+            (function () {
+                document.querySelectorAll('.post-photo-wrap').forEach(function (wrap) {
+                    const track = wrap.querySelector('.post-photo-track');
+                    if (!track) return;
+                    const slides = track.querySelectorAll('.post-photo-slide');
+                    if (slides.length <= 1) return; // 1 foto -> tidak perlu dots/counter
+
+                    // buat counter
+                    const counter = document.createElement('span');
+                    counter.className = 'post-photo-counter';
+                    counter.textContent = '1 / ' + slides.length;
+                    wrap.appendChild(counter);
+
+                    // buat dots
+                    const dotsWrap = document.createElement('div');
+                    dotsWrap.className = 'post-photo-dots';
+                    slides.forEach(function (_, i) {
+                        const dot = document.createElement('span');
+                        if (i === 0) dot.classList.add('active');
+                        dot.addEventListener('click', function () {
+                            track.scrollTo({ left: track.clientWidth * i, behavior: 'smooth' });
+                        });
+                        dotsWrap.appendChild(dot);
+                    });
+                    wrap.appendChild(dotsWrap);
+
+                    // update dots + counter aktif saat digeser
+                    let scrollTimeout;
+                    track.addEventListener('scroll', function () {
+                        clearTimeout(scrollTimeout);
+                        scrollTimeout = setTimeout(function () {
+                            const index = Math.round(track.scrollLeft / track.clientWidth);
+                            dotsWrap.querySelectorAll('span').forEach(function (d, i) {
+                                d.classList.toggle('active', i === index);
+                            });
+                            counter.textContent = (index + 1) + ' / ' + slides.length;
+                        }, 80);
+                    }, { passive: true });
+                });
+            })();
+        </script>
 
         <section class="links-container">
             <a href="https://alightcreative.com/am/share/u/x75KQVUqu0XrR0hKzxrgbzHdhLn2/p/s9AlB5Tdg7-0c1ba20843bde576"
@@ -4320,7 +4722,8 @@
                 <button type="button" id="fullPlayerNextBtn" class="full-player-main-btn">
                     <i class="fa-solid fa-forward-step"></i>
                 </button>
-                <button type="button" id="fullPlayerRepeatBtn" class="full-player-side-btn" title="Ulangi (klik untuk atur 1x/2x)">
+                <button type="button" id="fullPlayerRepeatBtn" class="full-player-side-btn"
+                    title="Ulangi (klik untuk atur 1x/2x)">
                     <i class="fa-solid fa-repeat"></i><sup id="fullPlayerRepeatBadge">1</sup>
                 </button>
             </div>
@@ -4357,33 +4760,41 @@
         <a href="#main-content" class="nav-item active" id="navHome">
             <i class="fa-solid fa-house"></i>
             <span>Home</span>
-            <div class="nav-quickmenu" id="navQuickMenu">
-                <button type="button" class="nav-quick-item" data-filter="informasi">
-                    <!-- <i class="fa-solid fa-circle-info"></i>-->Informasi
-                </button>
-                <button type="button" class="nav-quick-item" data-filter="intro">
-                    <!-- <i class="fa-solid fa-star"></i>-->Intro
-                </button>
-                <button type="button" class="nav-quick-item" data-filter="wm">
-                    <!-- <i class="fa-solid fa-crown"></i> --> Watermark
-                </button>
-                <button type="button" class="nav-quick-item" data-filter="social">
-                    <!-- <i class="fa-brands fa-tiktok"></i> --> Social Media
-                </button>
-                <button type="button" class="nav-quick-item" data-filter="ranking">
-                    <!-- <i class="fa-solid fa-trophy"></i> --> Ranking
-                </button>
-            </div>
         </a>
         <a href="#musik" class="nav-item" id="navMusic">
             <i class="fa-solid fa-music"></i>
             <span>Musik</span>
         </a>
-        <a href="profil.html" class="nav-item ">
+        <a href="profil.html" class="nav-item" id="navProfil" onclick="return handleProfilClick(event)">
             <i class="fa-solid fa-user"></i>
             <span>Profil</span>
         </a>
     </nav>
+
+    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="menu-dropdown" id="menuDropdown">
+        <button type="button" class="menu-dropdown-item active" data-filter="informasi">
+            <i class="fa-solid fa-circle-info"></i> Informasi
+        </button>
+        <button type="button" class="menu-dropdown-item" data-filter="intro">
+            <i class="fa-solid fa-star"></i> Intro
+        </button>
+        <button type="button" class="menu-dropdown-item" data-filter="wm">
+            <i class="fa-solid fa-crown"></i> Watermark
+        </button>
+        <!-- TAMBAHAN: MENU POSTINGAN -->
+        <button type="button" class="menu-dropdown-item" data-filter="postingan">
+            <i class="fa-solid fa-note-sticky"></i> Postingan
+        </button>
+        <button type="button" class="menu-dropdown-item" data-filter="social">
+            <i class="fa-brands fa-tiktok"></i> Social Media
+        </button>
+        <button type="button" class="menu-dropdown-item" data-filter="ranking">
+            <i class="fa-solid fa-trophy"></i> Ranking
+        </button>
+    </div>
     <script>
         // =========================
         // DATA MEMBER (DINAMIS) — SEKARANG DARI GOOGLE SHEET
@@ -4400,6 +4811,11 @@
         let userStatus = "ONLINE";
         let currentLink = "";
         let isVerifying = false;
+
+        // true kalau popup login sedang dibuka karena user (belum login) mencoba klik
+        // menu "Profil" -- dipakai supaya setelah berhasil login, dia langsung diarahkan
+        // ke profil.html, bukan cuma menutup popup di halaman informasi ini.
+        let profileLoginIntent = false;
 
         // Menandakan apakah fetch/parsing ke Google Sheet TERAKHIR benar-benar berhasil.
         // Dipakai supaya auto-logout (lihat isStoredSessionValid) tidak salah tembak saat
@@ -4461,6 +4877,21 @@
         // halaman tetap terbuka (bukan cuma sekali saat pertama load).
         const SESSION_CHECK_INTERVAL_MS = 3 * 60 * 1000; // 3 menit
 
+        // Helper singkat: apakah user saat ini sedang login.
+        function isLoggedIn() {
+            return localStorage.getItem('isLoggedIn') === 'true';
+        }
+
+        // Intro & Watermark berisi konten eksklusif member -- kedua menu ini
+        // disembunyikan dari dropdown selama user belum login. Dipanggil ulang
+        // tiap kali status login berubah (load awal, setelah login, setelah logout).
+        function updateMenuAuthVisibility() {
+            const loggedIn = isLoggedIn();
+            document.querySelectorAll('.menu-dropdown-item[data-filter="intro"], .menu-dropdown-item[data-filter="wm"]').forEach(function (btn) {
+                btn.style.display = loggedIn ? 'flex' : 'none';
+            });
+        }
+
         // Mengecek apakah username yang tersimpan di localStorage (sesi yang sedang
         // login) masih terdaftar di data member hasil fetch Sheet paling baru.
         function isStoredSessionValid() {
@@ -4474,38 +4905,22 @@
             return members.some(m => m.username.toLowerCase() === storedUsername.toLowerCase());
         }
 
-        // Paksa logout: hapus sesi tersimpan, tampilkan kembali layar login,
-        // dan beri tahu penyebabnya lewat pesan error di form login.
+        // Paksa logout: hapus sesi tersimpan, lalu tampilkan popup login dengan
+        // pesan penyebabnya. Konten informasi TIDAK ikut disembunyikan -- situs
+        // tetap bisa dilihat sebagai tamu, sama seperti mode guest browsing biasa.
         function forceLogout(reason) {
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('username');
 
-            const overlay = document.getElementById('login-overlay');
-            const content = document.getElementById('main-content');
-
-            if (overlay) {
-                overlay.style.display = 'flex';
-                overlay.style.pointerEvents = 'all';
-                overlay.style.opacity = '1';
-            }
-            if (content) {
-                content.style.opacity = '0';
-                content.style.filter = 'blur(12px)';
-                content.style.transform = 'translateY(30px)';
-            }
-
-            document.body.classList.add('login-open');
+            // Sembunyikan lagi menu Intro & Watermark karena statusnya balik jadi tamu.
+            updateMenuAuthVisibility();
 
             // Kosongkan input password lama supaya tidak auto-login lagi lewat
             // listener 'input' di access-key.
             const passInput = document.getElementById('access-key');
             if (passInput) passInput.value = '';
 
-            const errorMsg = document.getElementById('error-msg');
-            if (errorMsg) {
-                errorMsg.style.display = 'block';
-                errorMsg.innerText = reason || "Akun Anda sudah tidak terdaftar. Silakan login ulang.";
-            }
+            openLoginPopup(reason || "Akun Anda sudah tidak terdaftar. Silakan login ulang.");
 
             console.warn("Auto-logout:", reason);
         }
@@ -4530,14 +4945,24 @@
         window.onload = async () => {
             await loadMembers();
 
+            // Tampilkan/sembunyikan menu Intro & Watermark sesuai status login saat ini.
+            updateMenuAuthVisibility();
+
             if (localStorage.getItem('isLoggedIn') === 'true') {
                 if (isStoredSessionValid()) {
                     showContent();
                 } else {
                     // Akun yang tersimpan di perangkat ini sudah tidak ada di Sheet
-                    // -> jangan tampilkan konten, langsung paksa logout.
+                    // -> paksa logout (popup login akan muncul, tapi konten informasi
+                    // tetap bisa dilihat sebagai tamu, lihat forceLogout()).
                     forceLogout("Akun Anda sudah tidak terdaftar di database (Sheet). Silakan login ulang.");
                 }
+            } else {
+                // Tamu (belum login): halaman informasi/social/ranking/musik tetap bisa
+                // dilihat tanpa harus login dulu. Menu Intro & Watermark disembunyikan
+                // (lihat updateMenuAuthVisibility()), dan login baru diminta saat
+                // mencoba membuka menu "Profil" (lihat handleProfilClick()).
+                showContent();
             }
 
             updateClock();
@@ -4637,18 +5062,25 @@
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('username', username);
 
+                    // Sudah login -> munculkan lagi menu Intro & Watermark.
+                    updateMenuAuthVisibility();
+
                     // Sembunyikan spinner saat selesai
                     const spinner = btn.querySelector('.spinner-icon');
                     if (spinner) spinner.style.display = 'none';
                     btnText.innerText = "BERHASIL DIVERIFIKASI";
 
-                    // Lanjut ke konten utama (tetap di halaman ini, tidak pindah ke profil.html).
-                    // Username sudah tersimpan di localStorage di atas, jadi kalau user
-                    // klik menu "Profil" kapan pun, profil.html otomatis "konek" -- dia baca
-                    // localStorage.getItem('username') lalu mencocokkannya ke data member
-                    // yang sama (Google Sheet) untuk menampilkan profil orang ini.
+                    // Kalau popup login ini dibuka gara-gara klik menu "Profil" saat
+                    // belum login, langsung arahkan ke profil.html setelah berhasil.
+                    // Kalau bukan (mis. login lewat cara lain), cukup tutup popup --
+                    // konten informasi memang sudah tampil dari awal untuk tamu.
                     setTimeout(() => {
-                        showContent();
+                        if (profileLoginIntent) {
+                            profileLoginIntent = false;
+                            window.location.href = "profil.html";
+                        } else {
+                            showContent();
+                        }
                     }, 500);
                 }
             }, 800);
@@ -4715,8 +5147,78 @@
                 content.style.opacity = '1';
                 content.style.filter = 'blur(0)';
                 content.style.transform = 'translateY(0)';
+                document.body.classList.remove('login-open');
             }, 600);
         }
+
+        // =========================
+        // AKSES HALAMAN PROFIL (TAMU / BELUM LOGIN)
+        // =========================
+        // Situs ini bisa dijelajahi tanpa login (Informasi, Intro, Watermark,
+        // Social Media, Ranking, Musik). Login baru diwajibkan begitu tamu
+        // mencoba membuka menu "Profil" di bottom-nav -- saat itu popup login
+        // (username & password) akan muncul di atas konten yang sudah tampil.
+
+        // Dipanggil lewat onclick pada <a id="navProfil"> di bottom-nav.
+        function handleProfilClick(e) {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                return true; // sudah login, lanjutkan navigasi normal ke profil.html
+            }
+
+            e.preventDefault();
+            profileLoginIntent = true;
+            openLoginPopup("Silakan login terlebih dahulu untuk mengakses halaman Profil.");
+            return false;
+        }
+
+        // Menampilkan popup login di atas konten yang sedang tampil (tanpa
+        // menyembunyikan/memblur konten di baliknya seperti gerbang login lama).
+        function openLoginPopup(message) {
+            const overlay = document.getElementById('login-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                overlay.style.pointerEvents = 'all';
+                overlay.style.opacity = '1';
+            }
+            document.body.classList.add('login-open');
+
+            const errorMsg = document.getElementById('error-msg');
+            if (errorMsg) {
+                errorMsg.style.display = message ? 'block' : 'none';
+                errorMsg.innerText = message || '';
+            }
+        }
+
+        // Menutup popup login TANPA login (tombol X / klik di luar kartu login).
+        // Konten utama tidak perlu dipulihkan karena memang tidak pernah
+        // disembunyikan -- tamu tetap bisa lanjut menjelajah halaman ini.
+        function closeLoginPopup() {
+            profileLoginIntent = false;
+
+            const overlay = document.getElementById('login-overlay');
+            if (!overlay) return;
+
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.body.classList.remove('login-open');
+            }, 400);
+
+            const errorMsg = document.getElementById('error-msg');
+            if (errorMsg) errorMsg.style.display = 'none';
+        }
+
+        // Klik di area gelap (backdrop) login-overlay -- di luar kartu login --
+        // juga menutup popup, sama seperti tombol X.
+        document.addEventListener('click', function (e) {
+            const overlay = document.getElementById('login-overlay');
+            if (!overlay) return;
+            const isShown = overlay.style.display === 'flex';
+            if (isShown && e.target === overlay) {
+                closeLoginPopup();
+            }
+        });
 
         function openSidebar(e, el, customLink = null) {
             e.preventDefault();
@@ -4886,13 +5388,23 @@
         /* =========================
            SMOOTH FILTER SYSTEM
         ========================= */
-        const filterButtons = document.querySelectorAll('.nav-quick-item');
+        const filterButtons = document.querySelectorAll('.menu-dropdown-item');
         const linkCards = document.querySelectorAll('.link-card');
         const rankingSection = document.querySelector('.coming-soon-container');
         const rankingHeader = document.querySelector('.ranking-header');
         const infoBox = document.querySelector('.info-content');
 
         function applyFilter(filter) {
+            // Intro & Watermark adalah konten eksklusif member -- tamu (belum login)
+            // tidak boleh mengaksesnya lewat filter ini, sekalipun tombolnya sendiri
+            // sudah disembunyikan dari dropdown (lihat updateMenuAuthVisibility()).
+            if ((filter === 'intro' || filter === 'wm') && typeof isLoggedIn === 'function' && !isLoggedIn()) {
+                if (typeof openLoginPopup === 'function') {
+                    openLoginPopup('Konten ini khusus member. Silakan login terlebih dahulu.');
+                }
+                return;
+            }
+
             // 1. Kumpulkan semua elemen yang bisa berinteraksi dengan filter
             const allElements = [...linkCards, infoBox, rankingSection, rankingHeader];
 
@@ -4951,11 +5463,15 @@
             }, 300);
         }
 
-        // Catatan: pemilihan filter kini dikendalikan lewat quick-menu (long-press
-        // pada nav Home), lihat blok script "LONG PRESS QUICK MENU" di bawah.
+        // Catatan: pemilihan filter kini dikendalikan lewat menu dropdown (tombol
+        // hamburger kanan atas), lihat blok script "TOP-RIGHT MENU (HAMBURGER + DROPDOWN)" di bawah.
 
         // Inisialisasi awal saat halaman dimuat
         window.addEventListener('DOMContentLoaded', () => {
+            // Sembunyikan menu Intro & Watermark lebih awal (tidak perlu menunggu
+            // window.onload) supaya tamu tidak sempat melihat tombolnya berkedip.
+            if (typeof updateMenuAuthVisibility === 'function') updateMenuAuthVisibility();
+
             const defaultFilter = 'informasi';
             const activeBtn = document.querySelector(`[data-filter="${defaultFilter}"]`);
 
@@ -5358,7 +5874,7 @@ HARAP PATUHI RULES NEWBIEFAMS
                 { role: 'founder', label: 'Founder', icon: "https://i.ibb.co.com/zHL19BDt/founder.png", count: 1 },
                 { role: 'owner', label: 'Owner', icon: "https://i.ibb.co.com/svLNGtGz/boss.png", count: 0 },
                 { role: 'admin', label: 'Admin', icon: 'fa-user-gear', count: 6 },
-                { role: 'member', label: 'Member', icon: 'fa-user', count: 119 }
+                { role: 'member', label: 'Member', icon: 'fa-user', count: 47 }
             ];
 
             // CARA PAKAI: tinggal isi nama di dalam tanda kutip sesuai urutan member
@@ -5385,45 +5901,55 @@ HARAP PATUHI RULES NEWBIEFAMS
                     // Tambahkan nama member di sini satu per baris, contoh:
                     //  'Budi Santoso',
                     // 'Siti Aminah',
-                    '@fulzz.dongo',
+                    '@fulzz.dongo02',
                     '@fanxnewbie',
                     '@xizzprstv2',
                     '@khrilllnewbie',
-                    '@langnewbie',
-                    '@.kyutongakull',
                     '@fanzznewbie',
                     '@barrnewbie1',
                     '@ardiaja_06',
-                    '@catten_567',
                     '@kyy_senpaiedit',
-                    '@jaropemula7',
                     '@kyysprst_',
                     '@nissmecha',
                     '@aoiwhenwhen_',
                     '@malz.otaku',
                     '@shayapreset02',
-                    '@zidannewbie01',
                     '@killnewbie1',
                     '@frean.rea',
                     '@daisy_disini',
                     '@dzakicelesteria.npc',
-                    '@putraeditz._',
                     '@kayynewbiee01',
                     '@only_rizst',
                     '@darknnewbiee',
-                    '@hirunewbie1',
                     '@iannwangyy',
-                    '@wilkpejeje',
                     '@kaitoprst_',
                     '@klarusnewbie01',
                     '@njoll_preset',
-                    '@shan_newbie1',
                     '@nang_editz1',
-                    '@ryujin_newbie',
                     '@pitmasipemula_01',
                     '@chan_suka_rikka',
                     '@ryanewbie67',
-                    '@balzz_newbie77'
+                    '@balzz_newbie77',
+                    '@jarsigma7',
+                    '@raff.al1',
+                    '@vankullbet4',
+                    '@alxzpreset',
+                    '@prsttasukaa1',
+                    '@milooxvrn',
+                    '@yannnewbie01',
+                    '@ronn_567',
+                    '@ndre_pemula',
+                    '@cloudynewbie',
+                    '@clarialisia',
+                    '@Ryanewbie',
+                    '@yukinewbie_',
+                    '@.salleditz'
+
+
+
+
+
+
 
                 ]
             };
@@ -5632,10 +6158,10 @@ HARAP PATUHI RULES NEWBIEFAMS
                 const parts = [];
                 parts.push(
                     '<div class="schedule-note">' +
-                    'Jadwal di bawah ini berjalan <b>real-time</b> mengikuti jam perangkat. ' +
+                    'Jadwal di bawah ini merupakan jam kerja yang berjalan secara <b>real-time</b> menggunakan WIB. ' +
                     'Status akan otomatis berubah begitu waktunya masuk atau lewat.' +
-                    '<div class="schedule-live"><span class="dot" style="background:' + currentColor + '"></span>' +
-                    'Status saat ini: <b style="color:' + currentColor + '">' +
+                    '<div class="schedule-live">' +
+                    'Jadwal saat ini: <b style="color:' + currentColor + '">' +
                     (typeof userStatus !== 'undefined' ? userStatus : '-') + '</b></div>' +
                     '</div>'
                 );
@@ -5953,76 +6479,56 @@ HARAP PATUHI RULES NEWBIEFAMS
     -->
     <script>
         // =========================
-        // LONG PRESS QUICK MENU (Home nav)
-        // Support: mouse, touch, touchpad, touchscreen (pointer events)
+        // TOP-RIGHT MENU (HAMBURGER + DROPDOWN)
+        // Menggantikan long-press quick menu lama: sekarang tombol
+        // menu (kanan atas) tinggal diklik/tap untuk membuka dropdown.
         // =========================
         (function () {
+            const menuToggle = document.getElementById('menuToggle');
+            const menuDropdown = document.getElementById('menuDropdown');
             const navHome = document.getElementById('navHome');
-            const quickMenu = document.getElementById('navQuickMenu');
-            if (!navHome || !quickMenu) return;
-
-            const LONG_PRESS_MS = 450;
-            let pressTimer = null;
-            let longPressTriggered = false;
+            if (!menuToggle || !menuDropdown) return;
 
             function openMenu() {
-                longPressTriggered = true;
-                quickMenu.classList.add('show');
+                menuDropdown.classList.add('show');
+                menuToggle.classList.add('active');
                 if (navigator.vibrate) navigator.vibrate(15);
             }
 
             function closeMenu() {
-                quickMenu.classList.remove('show');
+                menuDropdown.classList.remove('show');
+                menuToggle.classList.remove('active');
             }
 
-            function startPress(e) {
-                // hanya untuk primary button / touch pertama
-                if (e.pointerType === 'mouse' && e.button !== 0) return;
-                longPressTriggered = false;
-                clearTimeout(pressTimer);
-                pressTimer = setTimeout(openMenu, LONG_PRESS_MS);
-            }
-
-            function cancelPress() {
-                clearTimeout(pressTimer);
-            }
-
-            navHome.addEventListener('pointerdown', startPress);
-            navHome.addEventListener('pointerup', cancelPress);
-            navHome.addEventListener('pointerleave', cancelPress);
-            navHome.addEventListener('pointercancel', cancelPress);
-            navHome.addEventListener('contextmenu', function (e) {
-                e.preventDefault();
-            });
-
-            // Cegah navigasi (klik biasa) kalau baru saja long-press
-            navHome.addEventListener('click', function (e) {
-                if (longPressTriggered) {
-                    e.preventDefault();
-                    longPressTriggered = false;
+            menuToggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (menuDropdown.classList.contains('show')) {
+                    closeMenu();
+                } else {
+                    openMenu();
                 }
             });
 
-            // Tutup menu kalau klik/tap di luar area menu & nav item
-            document.addEventListener('pointerdown', function (e) {
-                if (!navHome.contains(e.target)) {
+            // Tutup menu kalau klik/tap di luar area menu & tombol toggle
+            document.addEventListener('click', function (e) {
+                if (!menuDropdown.contains(e.target) && !menuToggle.contains(e.target)) {
                     closeMenu();
                 }
             });
 
-            // Semua item nav-item di bottom-nav (Home, Ranking, Profil)
+            // Semua item nav-item di bottom-nav (Home, Musik, Profil)
             const allNavItems = document.querySelectorAll('.bottom-nav .nav-item');
 
             // Pilih salah satu opsi di dropdown
-            quickMenu.querySelectorAll('.nav-quick-item').forEach(function (item) {
+            menuDropdown.querySelectorAll('.menu-dropdown-item[data-filter]').forEach(function (item) {
                 item.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
                     const filter = this.dataset.filter;
 
-                    // Set active pada tombol quick-menu yang dipilih
-                    quickMenu.querySelectorAll('.nav-quick-item').forEach(function (b) {
+                    // Set active pada item dropdown yang dipilih
+                    menuDropdown.querySelectorAll('.menu-dropdown-item').forEach(function (b) {
                         b.classList.remove('active');
                     });
                     this.classList.add('active');
@@ -6031,14 +6537,14 @@ HARAP PATUHI RULES NEWBIEFAMS
                     // Kecuali kalau posisi user masih di halaman #musik: nav yang menyala
                     // harus tetap "Musik", bukan "Home", karena section yang tampil tidak
                     // berpindah (lihat pengecekan window.location.hash === '#musik' di bawah).
-                    if (window.location.hash !== '#musik') {
+                    if (window.location.hash !== '#musik' && navHome) {
                         allNavItems.forEach(function (nav) {
                             nav.classList.remove('active');
                         });
                         navHome.classList.add('active');
                     }
 
-                    // "Ranking" kini diakses lewat quick-menu Home (bukan tab terpisah lagi),
+                    // "Ranking" diakses lewat menu dropdown (bukan tab terpisah lagi),
                     // jadi pindah ke halaman ranking, bukan menjalankan filter kartu member.
                     if (filter === 'ranking') {
                         window.location.hash = '#ranking';
@@ -6048,10 +6554,10 @@ HARAP PATUHI RULES NEWBIEFAMS
                     }
 
                     // FIX: kalau posisi user sedang di halaman MUSIK, jangan dipindah ke Home
-                    // hanya karena memilih filter lain lewat quick-menu. Cukup jalankan
+                    // hanya karena memilih filter lain lewat menu dropdown. Cukup jalankan
                     // applyFilter() supaya #main-content sudah ter-filter duluan, tapi section
                     // yang tampil tetap #musik-content -- user tidak "kelempar" keluar dari
-                    // halaman musik hanya gara-gara nav-quickmenu berubah.
+                    // halaman musik hanya gara-gara menu dropdown berubah.
                     if (window.location.hash === '#musik') {
                         if (typeof applyFilter === 'function') applyFilter(filter);
                         closeMenu();
@@ -6059,7 +6565,7 @@ HARAP PATUHI RULES NEWBIEFAMS
                     }
 
                     // FIX BUG: kalau user sedang berada di halaman ranking lalu
-                    // memilih filter LAIN (bukan "ranking") lewat quick-menu, sebelumnya kode
+                    // memilih filter LAIN (bukan "ranking") lewat menu dropdown, sebelumnya kode
                     // di sini langsung applyFilter() tanpa pernah memindahkan section kembali
                     // ke halaman utama. Akibatnya #ranking-content tetap yang tampil (display:
                     // block) sedangkan #main-content yang isinya diubah oleh applyFilter() tetap
@@ -7481,6 +7987,74 @@ HARAP PATUHI RULES NEWBIEFAMS
     });
 </script>-->
 
+
+
+    <!-- =========================
+         TAMBAHAN: FILTER POSTINGAN
+         Tidak mengubah fungsi applyFilter asli; hanya memperluasnya
+         agar menu "Postingan" dapat menampilkan .postingan-content.
+    ========================== -->
+    <script>
+        (function () {
+            const originalApplyFilter = window.applyFilter;
+
+            window.applyFilter = function (filter) {
+                const postinganBox = document.querySelector('.postingan-content');
+
+                // Jika filter postingan dipilih, sembunyikan tampilan filter lain
+                // lalu tampilkan hanya feed postingan.
+                if (filter === 'postingan' && postinganBox) {
+                    const linkCards = document.querySelectorAll('.link-card');
+                    const rankingSection = document.querySelector('.coming-soon-container');
+                    const rankingHeader = document.querySelector('.ranking-header');
+                    const infoBox = document.querySelector('.info-content');
+
+                    const allElements = [
+                        ...linkCards,
+                        infoBox,
+                        postinganBox,
+                        rankingSection,
+                        rankingHeader
+                    ];
+
+                    allElements.forEach(function (el) {
+                        if (el) {
+                            el.style.opacity = '0';
+                            el.style.transform = 'translateY(10px) scale(0.98)';
+                            el.style.pointerEvents = 'none';
+                            el.style.transition = 'all 0.3s ease';
+                        }
+                    });
+
+                    setTimeout(function () {
+                        allElements.forEach(function (el) {
+                            if (el) el.style.display = 'none';
+                        });
+
+                        postinganBox.style.display = 'block';
+
+                        requestAnimationFrame(function () {
+                            postinganBox.style.opacity = '1';
+                            postinganBox.style.transform = 'translateY(0) scale(1)';
+                            postinganBox.style.pointerEvents = 'all';
+                        });
+                    }, 300);
+
+                    return;
+                }
+
+                // Untuk filter lain, gunakan fungsi asli sepenuhnya.
+                // Hanya pastikan postingan ikut disembunyikan.
+                if (postinganBox) {
+                    postinganBox.style.display = 'none';
+                }
+
+                if (typeof originalApplyFilter === 'function') {
+                    originalApplyFilter(filter);
+                }
+            };
+        })();
+    </script>
 
 </body>
 
