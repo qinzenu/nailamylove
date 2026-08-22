@@ -2182,6 +2182,20 @@
             color: white;
         }
 
+        /* Tombol "Login" di dropdown -- dibuat menonjol (selalu warna aksen)
+           karena cuma muncul untuk tamu yang belum login. */
+        .menu-dropdown-item.menu-dropdown-login {
+            background: linear-gradient(135deg, var(--primary), var(--primary2));
+            border-color: transparent;
+            color: #05060a;
+            font-weight: 800;
+        }
+
+        .menu-dropdown-item.menu-dropdown-login:hover {
+            filter: brightness(1.1);
+            color: #05060a;
+        }
+
         /* =========================
            LOGIN POPUP CLOSE BUTTON
            (login-overlay sekarang tampil sebagai popup yang bisa
@@ -3370,6 +3384,69 @@
             -webkit-user-select: none;
             user-select: none;
             -webkit-touch-callout: none;
+        }
+
+        /* =========================
+           FEATURE TOAST (notifikasi kecil, mis. "fitur Premium terkunci")
+        ========================= */
+        .feature-toast {
+            position: fixed;
+            left: 50%;
+            bottom: 110px;
+            transform: translateX(-50%) translateY(16px);
+            max-width: 88%;
+            width: max-content;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(15, 17, 24, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55);
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text);
+            z-index: 10070;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .feature-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .feature-toast i {
+            color: #ffd24a;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        /* Tag kecil "PREMIUM" / "BASIC" untuk menandai tingkat fitur musik */
+        .feature-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .feature-tag.tag-premium {
+            background: linear-gradient(135deg, #ffd24a, #ff9f1c);
+            color: #1a1200;
+        }
+
+        .feature-tag.tag-basic {
+            background: rgba(54, 255, 14, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(54, 255, 14, 0.35);
         }
 
         /* =========================
@@ -4723,7 +4800,7 @@
                     <i class="fa-solid fa-forward-step"></i>
                 </button>
                 <button type="button" id="fullPlayerRepeatBtn" class="full-player-side-btn"
-                    title="Ulangi (klik untuk atur 1x/2x)">
+                    title="Ulangi (klik untuk atur 1x/2x) — Fitur Basic, perlu paket Basic/Plus">
                     <i class="fa-solid fa-repeat"></i><sup id="fullPlayerRepeatBadge">1</sup>
                 </button>
             </div>
@@ -4732,6 +4809,7 @@
                 <span class="full-player-speed-hint">
                     <i class="fa-solid fa-gauge"></i> Tahan tombol play untuk ubah kecepatan
                 </span>
+                <span class="feature-tag tag-premium"><i class="fa-solid fa-crown"></i> Premium</span>
                 <span class="full-player-speed-badge" id="fullPlayerSpeedBadge">1x</span>
             </div>
 
@@ -4794,6 +4872,13 @@
         <button type="button" class="menu-dropdown-item" data-filter="ranking">
             <i class="fa-solid fa-trophy"></i> Ranking
         </button>
+        <!-- TAMBAHAN: TOMBOL LOGIN -->
+        <!-- Hanya tampil kalau user BELUM login (lihat updateMenuAuthVisibility()).
+             Bottom-nav (Home/Musik/Profil) disembunyikan untuk tamu, jadi tombol
+             ini jadi satu-satunya pintu masuk login selain popup otomatis. -->
+        <button type="button" class="menu-dropdown-item menu-dropdown-login" id="menuLoginBtn">
+            <i class="fa-solid fa-right-to-bracket"></i> Login
+        </button>
     </div>
     <script>
         // =========================
@@ -4805,7 +4890,49 @@
         // Waktu | NF-ID | Name | Username | Password | Role | Avatar | Recovery | Balance | StreakDays | Level | PremiumType | ExpiredDate | Telegram ID
         // Pastikan Sheet di-share ke "Anyone with the link" -> Viewer, karena fetch ini dilakukan langsung dari browser tanpa API key.
         const SHEET_ID = "1I9G2pN7x3_qe5jOiNUbvINP0pRiAnHYuwYBQJdSDT0A";
-        const SHEET_MEMBERS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+        // PENTING: sebelumnya pakai endpoint gviz (tqx=out:json). Endpoint itu punya
+        // "heuristik" internal Google untuk menebak baris mana yang header dan tipe
+        // data tiap kolom -- dan tebakan itu BISA BERUBAH kalau isi salah satu kolom
+        // (mis. StreakDays) berubah dari angka ke teks ("Max") atau sebaliknya.
+        // Kalau tebakannya salah, seluruh nama kolom (Username, Password, dst) jadi
+        // tidak terbaca, sehingga semua member "hilang" dan user aktif ke-logout paksa.
+        //
+        // Endpoint CSV export di bawah ini TIDAK punya heuristik semacam itu sama
+        // sekali -- baris pertama selalu apa adanya (plain text), tidak ada tebak-tebakan
+        // tipe data. Ini menghilangkan akar masalahnya secara permanen.
+        const SHEET_MEMBERS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+        // Parser CSV sederhana (RFC4180-ish): menangani field yang dibungkus tanda kutip
+        // (bisa berisi koma/baris baru di dalamnya, seperti pada beberapa URL Avatar).
+        function parseCSV(text) {
+            const rows = [];
+            let row = [];
+            let field = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+
+                if (inQuotes) {
+                    if (char === '"') {
+                        if (text[i + 1] === '"') { field += '"'; i++; }
+                        else { inQuotes = false; }
+                    } else {
+                        field += char;
+                    }
+                    continue;
+                }
+
+                if (char === '"') { inQuotes = true; }
+                else if (char === ',') { row.push(field); field = ''; }
+                else if (char === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+                else if (char === '\r') { /* diabaikan, \n yang menandai akhir baris */ }
+                else { field += char; }
+            }
+
+            if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+            return rows;
+        }
 
         let members = [];
         let userStatus = "ONLINE";
@@ -4826,27 +4953,26 @@
         // Load data member langsung dari Google Sheet (menggantikan fetch ke users.json)
         async function loadMembers() {
             try {
-                const response = await fetch(SHEET_MEMBERS_URL);
+                // Cache-busting: pastikan browser tidak menyimpan versi lama data Sheet
+                // (mis. sebelum StreakDays diubah), sama seperti fetch di profil.html.
+                const response = await fetch(SHEET_MEMBERS_URL + '&t=' + Date.now(), { cache: 'no-store' });
                 if (!response.ok) throw new Error("Gagal mengambil data dari Google Sheet");
 
-                const rawText = await response.text();
+                const csvText = await response.text();
+                const allRows = parseCSV(csvText).filter(r => r.length > 1 || (r.length === 1 && r[0] !== ''));
 
-                // Respons endpoint gviz dibungkus dalam:
-                // google.visualization.Query.setResponse({ ... });
-                // jadi perlu diambil bagian objek JSON murninya saja sebelum di-parse.
-                const jsonText = rawText.substring(rawText.indexOf('{'), rawText.lastIndexOf('}') + 1);
-                const data = JSON.parse(jsonText);
+                if (allRows.length < 1) throw new Error("CSV dari Sheet kosong");
 
-                const cols = (data.table.cols || []).map(c => (c.label || '').trim());
-                const rows = data.table.rows || [];
+                // Baris pertama = header apa adanya (tanpa tebak-tebakan tipe data).
+                const cols = allRows[0].map(c => c.trim());
+                const dataRows = allRows.slice(1);
 
-                members = rows
-                    .map(row => {
+                members = dataRows
+                    .map(cells => {
                         const obj = {};
-                        (row.c || []).forEach((cell, i) => {
-                            const key = cols[i];
+                        cols.forEach((key, i) => {
                             if (!key) return;
-                            obj[key] = (cell && cell.v !== null && cell.v !== undefined) ? cell.v : '';
+                            obj[key] = cells[i] !== undefined ? cells[i] : '';
                         });
 
                         return {
@@ -4860,13 +4986,58 @@
                     // buang baris kosong di Sheet (yang belum diisi Username)
                     .filter(m => m.username);
 
+                // Kalau hasil parsing kosong total padahal fetch-nya "berhasil", ini biasanya
+                // BUKAN berarti Sheet-nya memang kosong, tapi tanda header/kolom gagal terbaca
+                // dengan benar. Jangan anggap ini bukti sah bahwa semua akun hilang -- kalau
+                // tidak, semua user aktif bisa ke-logout paksa.
+                if (members.length === 0) {
+                    throw new Error("Parsing Sheet menghasilkan 0 member (kemungkinan header/kolom gagal terbaca)");
+                }
+
                 lastMembersFetchSucceeded = true;
-                console.log("Data Member dimuat dari Google Sheet:", members);
+                console.log("Data Member dimuat dari Google Sheet (CSV):", members);
             } catch (error) {
                 console.error("Gagal memuat data member dari Google Sheet:", error);
                 members = [];
                 lastMembersFetchSucceeded = false;
             }
+        }
+
+        // =========================
+        // HELPER: DATA MEMBER YANG SEDANG LOGIN & STATUS PREMIUM
+        // Dipakai untuk fitur yang dikunci Premium (lihat "KECEPATAN PUTAR").
+        // =========================
+
+        // Ambil objek member (dari data Sheet) untuk user yang sedang login di
+        // perangkat ini. null kalau belum login atau datanya belum termuat.
+        function getCurrentMember() {
+            if (localStorage.getItem('isLoggedIn') !== 'true') return null;
+            const storedUsername = localStorage.getItem('username');
+            if (!storedUsername) return null;
+            return members.find(m => m.username.toLowerCase() === storedUsername.toLowerCase()) || null;
+        }
+
+        // Premium = kolom PremiumType di Sheet berisi "basic" atau "plus" DAN
+        // ExpiredDate-nya bukan "none" (artinya masa aktifnya belum kadaluarsa).
+        // Sama persis dengan logika premium yang dipakai di halaman profil.
+        // Dipakai sebagai syarat MINIMAL untuk fitur tingkat "Basic" (mis. Repeat):
+        // member paket Basic MAUPUN Plus sama-sama boleh pakai.
+        function isPremiumUser() {
+            const m = getCurrentMember();
+            if (!m) return false;
+            const premiumType = String(m['PremiumType'] || '').trim().toLowerCase();
+            const expiredDate = String(m['ExpiredDate'] || '').trim().toLowerCase();
+            return (premiumType === 'basic' || premiumType === 'plus') && expiredDate !== 'none' && expiredDate !== '';
+        }
+
+        // Plus = tier PALING TINGGI. Dipakai untuk fitur eksklusif "Premium"
+        // (mis. Kecepatan Putar) yang TIDAK termasuk di paket Basic.
+        function isPlusUser() {
+            const m = getCurrentMember();
+            if (!m) return false;
+            const premiumType = String(m['PremiumType'] || '').trim().toLowerCase();
+            const expiredDate = String(m['ExpiredDate'] || '').trim().toLowerCase();
+            return premiumType === 'plus' && expiredDate !== 'none' && expiredDate !== '';
         }
 
         // =========================
@@ -4890,6 +5061,16 @@
             document.querySelectorAll('.menu-dropdown-item[data-filter="intro"], .menu-dropdown-item[data-filter="wm"]').forEach(function (btn) {
                 btn.style.display = loggedIn ? 'flex' : 'none';
             });
+
+            // Bottom-nav (Home/Musik/Profil) hanya untuk user yang SUDAH login.
+            // Tamu diarahkan login lewat tombol "Login" di menu dropdown (kanan atas).
+            const bottomNav = document.querySelector('.bottom-nav');
+            if (bottomNav) bottomNav.style.display = loggedIn ? 'flex' : 'none';
+
+            // Tombol "Login" di dropdown: tampil hanya kalau BELUM login, hilang
+            // begitu sudah login (karena Profil sudah bisa diakses lewat bottom-nav).
+            const menuLoginBtn = document.getElementById('menuLoginBtn');
+            if (menuLoginBtn) menuLoginBtn.style.display = loggedIn ? 'none' : 'flex';
         }
 
         // Mengecek apakah username yang tersimpan di localStorage (sesi yang sedang
@@ -6586,6 +6767,20 @@ HARAP PATUHI RULES NEWBIEFAMS
                     closeMenu();
                 });
             });
+
+            // Tombol "Login" (tamu, belum login): buka popup login biasa, bukan
+            // filter konten. Tidak diproses lewat forEach [data-filter] di atas
+            // karena tombol ini sengaja tidak diberi atribut data-filter.
+            const menuLoginBtn = document.getElementById('menuLoginBtn');
+            if (menuLoginBtn) {
+                menuLoginBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeMenu();
+                    profileLoginIntent = false;
+                    openLoginPopup();
+                });
+            }
         })();
     </script>
     <script>
@@ -7520,8 +7715,43 @@ HARAP PATUHI RULES NEWBIEFAMS
             try { localStorage.setItem('nf_music_speed', String(speed)); } catch (e) { /* ignore */ }
         }
 
+        // Notifikasi kecil melayang (dipakai untuk pesan "fitur Premium terkunci", dll).
+        let featureToastTimer = null;
+        function showFeatureToast(message, iconClass) {
+            let toastEl = document.getElementById('featureToast');
+            if (!toastEl) {
+                toastEl = document.createElement('div');
+                toastEl.id = 'featureToast';
+                toastEl.className = 'feature-toast';
+                toastEl.innerHTML = '<i class="fa-solid ' + (iconClass || 'fa-crown') + '"></i><span id="featureToastText"></span>';
+                document.body.appendChild(toastEl);
+            }
+            const textEl = document.getElementById('featureToastText');
+            if (textEl) textEl.textContent = message;
+
+            clearTimeout(featureToastTimer);
+            toastEl.classList.add('show');
+            featureToastTimer = setTimeout(function () {
+                toastEl.classList.remove('show');
+            }, 2600);
+        }
+
+        // KECEPATAN PUTAR = FITUR PREMIUM (khusus tier PLUS, tidak termasuk paket
+        // Basic). Member biasa/Basic/belum login tidak bisa membuka menu kecepatan;
+        // hanya diberi tahu lewat toast.
         function openSpeedMenu(anchorBtn) {
             if (!speedMenu || !anchorBtn) return;
+
+            if (!isPlusUser()) {
+                if (navigator.vibrate) { try { navigator.vibrate(15); } catch (e) { /* ignore */ } }
+                if (localStorage.getItem('isLoggedIn') !== 'true') {
+                    showFeatureToast('Kecepatan putar musik adalah fitur Premium (Plus). Login & upgrade dulu, ya!');
+                } else {
+                    showFeatureToast('Kecepatan putar musik adalah fitur Premium (Plus). Upgrade paketmu untuk membukanya.');
+                }
+                return;
+            }
+
             const rect = anchorBtn.getBoundingClientRect();
             speedMenu.classList.add('show');
 
@@ -7579,6 +7809,14 @@ HARAP PATUHI RULES NEWBIEFAMS
         if (speedMenu) {
             speedMenu.querySelectorAll('.speed-option').forEach(function (btn) {
                 btn.addEventListener('click', function () {
+                    // Lapis pengaman tambahan: menu ini seharusnya cuma bisa terbuka lewat
+                    // openSpeedMenu() yang sudah mengecek Premium, tapi dicek ulang di sini
+                    // supaya tidak bisa "disiasati" lewat cara lain (mis. devtools).
+                    if (!isPlusUser()) {
+                        closeSpeedMenu();
+                        showFeatureToast('Kecepatan putar musik adalah fitur Premium (Plus).');
+                        return;
+                    }
                     applySpeed(parseFloat(btn.dataset.speed));
                     closeSpeedMenu();
                 });
@@ -7681,12 +7919,9 @@ HARAP PATUHI RULES NEWBIEFAMS
             }
         });
 
-        if (musicFullPlayer) {
-            musicFullPlayer.addEventListener('click', function (e) {
-                // Klik di area backdrop (bukan di dalam kotak player) akan menutup full player
-                if (e.target === musicFullPlayer) collapseFullPlayer();
-            });
-        }
+        // Klik di backdrop/luar kotak player TIDAK lagi menutup full player -- sekarang
+        // full player hanya bisa ditutup lewat tombol chevron-down (fullPlayerCollapseBtn)
+        // di bawah, supaya tidak ke-close tanpa sengaja saat tap di area kosong.
 
         // ---------- full player controls ----------
         if (fullPlayerCollapseBtn) {
@@ -7726,6 +7961,18 @@ HARAP PATUHI RULES NEWBIEFAMS
 
         if (fullPlayerRepeatBtn) {
             fullPlayerRepeatBtn.addEventListener('click', function () {
+                // ULANGI LAGU = FITUR BASIC. Perlu minimal paket Basic (PremiumType
+                // "basic" ATAU "plus", keduanya boleh) -- tamu/free tier tidak bisa pakai.
+                if (!isPremiumUser()) {
+                    if (navigator.vibrate) { try { navigator.vibrate(15); } catch (e) { /* ignore */ } }
+                    if (localStorage.getItem('isLoggedIn') !== 'true') {
+                        showFeatureToast('Ulangi lagu (repeat) adalah fitur Basic. Login & upgrade dulu, ya!', 'fa-repeat');
+                    } else {
+                        showFeatureToast('Ulangi lagu (repeat) adalah fitur Basic. Upgrade paketmu untuk membukanya.', 'fa-repeat');
+                    }
+                    return;
+                }
+
                 // Siklus bertahap tiap klik: mati -> ulangi 1x -> ulangi 2x -> mati lagi.
                 // (Sebelumnya sempat ada mode 'all' di siklus ini, tapi itu bikin bug:
                 // di playNext() mode 'all' berarti LANJUT ke lagu berikutnya, bukan
