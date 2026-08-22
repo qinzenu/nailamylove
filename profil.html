@@ -2622,7 +2622,45 @@ window._sisaWaktuInterval = window._sisaWaktuInterval || null;
 // satu Sheet jadi sumber data tunggal untuk seluruh halaman.
 // =========================
 const SHEET_ID = "1I9G2pN7x3_qe5jOiNUbvINP0pRiAnHYuwYBQJdSDT0A";
-const SHEET_MEMBERS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+// PENTING: sebelumnya pakai endpoint gviz (tqx=out:json). Endpoint itu punya
+// heuristik internal Google untuk menebak baris header & tipe data tiap kolom,
+// dan tebakan itu bisa berubah kalau isi kolom lain (mis. StreakDays) berubah
+// dari angka ke teks ("Max") atau sebaliknya -- yang bikin semua nama kolom
+// (Username, Password, dst) gagal terbaca dan user aktif ke-logout paksa.
+// Endpoint CSV export di bawah tidak punya heuristik semacam itu sama sekali.
+const SHEET_MEMBERS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+// Parser CSV sederhana (RFC4180-ish): menangani field yang dibungkus tanda kutip
+// (bisa berisi koma/baris baru di dalamnya, seperti pada beberapa URL Avatar).
+function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+
+        if (inQuotes) {
+            if (char === '"') {
+                if (text[i + 1] === '"') { field += '"'; i++; }
+                else { inQuotes = false; }
+            } else {
+                field += char;
+            }
+            continue;
+        }
+
+        if (char === '"') { inQuotes = true; }
+        else if (char === ',') { row.push(field); field = ''; }
+        else if (char === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else if (char === '\r') { /* diabaikan, \n yang menandai akhir baris */ }
+        else { field += char; }
+    }
+
+    if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+    return rows;
+}
 
 // Menandakan apakah fetch/parsing ke Sheet TERAKHIR benar-benar berhasil. Dipakai
 // supaya auto-logout tidak salah tembak saat fetch cuma gagal sementara (mis.
@@ -2641,22 +2679,21 @@ async function fetchMembersFromSheet() {
         const response = await fetch(SHEET_MEMBERS_URL + '&t=' + Date.now(), { cache: 'no-store' });
         if (!response.ok) throw new Error('Gagal mengambil data dari Google Sheet');
 
-        const rawText = await response.text();
-        // Respons endpoint gviz dibungkus: google.visualization.Query.setResponse({ ... });
-        // jadi perlu diambil bagian objek JSON murninya saja sebelum di-parse.
-        const jsonText = rawText.substring(rawText.indexOf('{'), rawText.lastIndexOf('}') + 1);
-        const data = JSON.parse(jsonText);
+        const csvText = await response.text();
+        const allRows = parseCSV(csvText).filter(r => r.length > 1 || (r.length === 1 && r[0] !== ''));
 
-        const cols = (data.table.cols || []).map(c => (c.label || '').trim());
-        const rows = data.table.rows || [];
+        if (allRows.length < 1) throw new Error('CSV dari Sheet kosong');
 
-        const users = rows
-            .map(row => {
+        // Baris pertama = header apa adanya (tanpa tebak-tebakan tipe data).
+        const cols = allRows[0].map(c => c.trim());
+        const dataRows = allRows.slice(1);
+
+        const users = dataRows
+            .map(cells => {
                 const raw = {};
-                (row.c || []).forEach((cell, i) => {
-                    const key = cols[i];
+                cols.forEach((key, i) => {
                     if (!key) return;
-                    raw[key] = (cell && cell.v !== null && cell.v !== undefined) ? cell.v : '';
+                    raw[key] = cells[i] !== undefined ? cells[i] : '';
                 });
 
                 // Pemetaan header Sheet -> nama field yang dipakai di script halaman ini
@@ -2679,6 +2716,14 @@ async function fetchMembersFromSheet() {
             })
             // buang baris kosong di Sheet (yang belum diisi Username)
             .filter(u => u.username);
+
+        // Kalau hasil parsing kosong total padahal fetch-nya "berhasil", ini biasanya
+        // BUKAN berarti Sheet-nya memang kosong, tapi tanda header/kolom gagal terbaca
+        // dengan benar (mis. gviz salah tebak baris header). Jangan anggap ini bukti sah
+        // bahwa semua akun hilang -- kalau tidak, semua user aktif bisa ke-logout paksa.
+        if (users.length === 0) {
+            throw new Error('Parsing Sheet menghasilkan 0 member (kemungkinan header/kolom gagal terbaca)');
+        }
 
         lastMembersFetchSucceeded = true;
         return users;
@@ -2863,17 +2908,19 @@ if (nextLevelText === "Max") {
             if (videoBackgroundContainer) {
                 if (isPremiumType && hasValidExpiry && !isExpired) {
                     // Gunakan Gambar untuk Premium Aktif
-                    videoBackgroundContainer.innerHTML = `<img src="https://i.ibb.co.com/6Jcc8mLC/Gojo.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">`;
+                    videoBackgroundContainer.innerHTML = `<video src="https://www.image2url.com/r2/default/videos/1787416526926-80ee35e3-b8d5-4eac-8a7b-e3630d09d73e.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
+                    // videoBackgroundContainer.innerHTML = `<img src="https://i.ibb.co.com/6Jcc8mLC/Gojo.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">`;
                 } else {
                     // Gunakan Video untuk Non-Premium atau Expired
-                    videoBackgroundContainer.innerHTML = `<video src="./vd/Gojo.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
+                    videoBackgroundContainer.innerHTML = `<video src="https://www.image2url.com/r2/default/videos/1787414606753-a80336f5-08b1-4cbb-9351-dad84148f233.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
                 }
             };
 
             if (profilBanner) {
                 if (isPremiumType && hasValidExpiry && !isExpired) {
                     // Gunakan Gambar untuk Premium Aktif
-                     profilBanner.innerHTML = `<video src="./vd/Sachiro.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
+                     //profilBanner.innerHTML = `<video src="https://www.image2url.com/r2/default/videos/1787414746577-98b093c1-14a3-4d87-8df3-0590e8016cab.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
+                     profilBanner.innerHTML = `<video src="https://www.image2url.com/r2/default/videos/1787416169468-3b546f96-4c77-4178-bb93-73ca931cdfa4.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
                 } else {
                      profilBanner.innerHTML = `<img src="https://i.ibb.co.com/F4NQDJjx/Banner-Profil.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">`;
                     // Gunakan Video untuk Non-Premium atau Expired
