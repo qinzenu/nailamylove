@@ -3559,7 +3559,7 @@
             </button>
 
             <p class="signup-text" style="font-size: 0.8em; margin-top: 15px; color: var(--muted);">
-                Belum Punya Akun? <a href="https://discord.gg/pUp6xpE6nW"
+                Belum Punya Akun? <a href="https://discord.gg/dFFtc3ZQrT"
                     style="color: #00B894; text-decoration: none;">Buat Akun</a>
             </p>
 
@@ -4177,12 +4177,30 @@
                         </div>
                     </div>
                     <div class="post-body">
-                        <p class="post-text">Kata Idan, tanggal 24 hari senin OPMEM</p>
+                        <p class="post-text">OPMEM NEWBIE DI BUKA</p>
                     </div>
                     <div class="post-footer">
                         <div class="post-footer-date">
                             <i class="fa-regular fa-calendar"></i>
-                            <span>18 Agustus 2026</span>
+                            <span>24 Agustus 2026</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-card">
+                    <div class="post-author">
+                        <img class="post-author-avatar" src="https://i.ibb.co.com/vvQLChCV/icon.png" alt="NewbieFams">
+                        <div class="post-author-meta">
+                            <div class="post-author-name">NewbieFams <span class="post-verified-badge"><i class="fa-solid fa-check"></i></span></div>
+                            <div class="post-author-role">Official Team</div>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p class="post-text">OPMEM NEWBIE DI TUTUP, DI KARENA KAN VIDEO OPMEMNYA KENA PL</p>
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-footer-date">
+                            <i class="fa-regular fa-calendar"></i>
+                            <span>26 Agustus 2026</span>
                         </div>
                     </div>
                 </div>
@@ -5053,6 +5071,17 @@
             return localStorage.getItem('isLoggedIn') === 'true';
         }
 
+        // Apakah user yang sedang login berperan sebagai Owner atau Admin
+        // (berdasarkan kolom "Role" di Google Sheet). Dipakai untuk membuka
+        // akses penuh ke semua intro -- selain Owner/Admin hanya boleh
+        // melihat 1 intro gratis (lihat applyFilter -> FREE_INTRO_TITLE).
+        function isOwnerOrAdmin() {
+            const m = getCurrentMember();
+            if (!m) return false;
+            const role = String(m.role || '').trim().toLowerCase();
+            return role === 'owner' || role === 'admin';
+        }
+
         // Intro & Watermark berisi konten eksklusif member -- kedua menu ini
         // disembunyikan dari dropdown selama user belum login. Dipanggil ulang
         // tiap kali status login berubah (load awal, setelah login, setelah logout).
@@ -5626,7 +5655,19 @@
                     // TAMPILKAN: Kartu Member
                     // Jika filter 'all', ambil semua link-card. Jika tidak, ambil yang sesuai class-nya.
                     const selector = filter === 'all' ? '.link-card' : `.link-card.${filter}`;
-                    const targetCards = document.querySelectorAll(selector);
+                    let targetCards = Array.from(document.querySelectorAll(selector));
+
+                    // Intro adalah konten khusus. HANYA Owner & Admin yang boleh
+                    // melihat SEMUA intro. Selain itu (member biasa) hanya boleh
+                    // melihat 1 intro gratis: "INTRO 3D V4 NEWBIEFAMS". Intro
+                    // lainnya tetap disembunyikan, baik saat filter 'intro'
+                    // maupun saat filter 'all'.
+                    if (typeof isOwnerOrAdmin === 'function' && !isOwnerOrAdmin()) {
+                        targetCards = targetCards.filter(card => {
+                            if (!card.classList.contains('intro')) return true;
+                            return card.getAttribute('data-title') === 'INTRO 3D V4 NEWBIEFAMS';
+                        });
+                    }
 
                     targetCards.forEach(card => {
                         card.style.display = 'flex'; // Link card biasanya menggunakan flex
@@ -5886,14 +5927,16 @@
         const UPDATE_MESSAGE = `
 ✨ UPDATE VERSI INI:
 
-• PERGANTIAN RANKING DENGAN MUSIC
-    PENAMBAHAN FITUR MUSIC
-    RANKING PINDAH KE HOME
-• FIX BUG DAN MENINGKATKAN PERFORMA
+• PENAMBAHAN FITUR PREMIUM:
+    - FITUR SETEL ULANG LAGU
+    - FITUR SPEED LAGU.
+• PENAMBAHAN MEMBER BARU.
+• PENAMPAHAN POSTINGAN.
+• FIX BUG DAN MENINGKATKAN PERFORMA.
 
 
-GUNAKAN KODE UPDATEJULI06
-UNTUK MENDAPATKAN DISKON 5.56%
+GUNAKAN KODE HUTRI-81TH
+UNTUK MENDAPATKAN DISKON 34,48%
 
 HARAP PATUHI RULES NEWBIEFAMS
 `;
@@ -8092,8 +8135,7 @@ HARAP PATUHI RULES NEWBIEFAMS
             renderMusicList('');
         });
     </script>
-
-    <!-- <script>
+<script>
         /* =========================
            NEWBIEFAMS PROTECTION
            MOBILE SAFE VERSION
@@ -8217,6 +8259,7 @@ HARAP PATUHI RULES NEWBIEFAMS
 
         })();
     </script>
+    <!--
    <script>
     // Jalankan pengecekan saat halaman selesai dimuat
     window.addEventListener('load', function() {
