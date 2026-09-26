@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newbie Fams Official Website — Creator Registration</title>
+  <link rel="icon" href="https://i.ibb.co.com/1tBC2ngW/Logo-12-F8-F09.png">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #07070a;
+      color: #fafafa;
+      overflow-x: hidden;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Ambient Vorath Glows */
+    @keyframes vorathPulseA {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+      }
+
+      50% {
+        transform: translate(35px, -30px) scale(1.12) rotate(15deg);
+      }
+    }
+
+    @keyframes vorathPulseB {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(35px) scale(1.08) rotate(-10deg);
+      }
+    }
+
+    .glow-cyan {
+      animation: vorathPulseA 11s ease-in-out infinite;
+    }
+
+    .glow-magenta {
+      animation: vorathPulseB 14s ease-in-out infinite;
+    }
+
+    /* Glass Card Surface */
+    .glass-surface {
+      background: rgba(18, 18, 24, 0.65);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .input-vorath {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .input-vorath:focus {
+      box-shadow: 0 0 0 3px rgba(37, 244, 238, 0.22);
+      border-color: #25f4ee;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+
+
+    /* OTP professional verification card */
+    .otp-verification-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .018));
+      border: 1px solid rgba(255, 255, 255, .08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .035), 0 14px 40px rgba(0, 0, 0, .18);
+    }
+
+    .otp-code-input {
+      letter-spacing: .28em;
+      font-variant-numeric: tabular-nums;
+      caret-color: #25f4ee;
+    }
+
+    .otp-code-input:focus {
+      border-color: rgba(37, 244, 238, .45) !important;
+      box-shadow: 0 0 0 3px rgba(37, 244, 238, .08), 0 0 28px rgba(37, 244, 238, .08);
+    }
+  
+      .loading-dots::after {
+        content: '';
+        display: inline-block;
+        width: 1.4em;
+        text-align: left;
+        animation: loadingDots 1.2s steps(4, end) infinite;
+      }
+
+      @keyframes loadingDots {
+        0% { content: ''; }
+        25% { content: '.'; }
+        50% { content: '..'; }
+        75% { content: '...'; }
+        100% { content: ''; }
+      }
+    </style>
+
+  <script>
+    /*
+     * TAMBAHAN BARU — Registrasi + Email OTP + Google Sheets + #upload
+     * Kode asli di bawah TIDAK dihapus; bagian ini hanya menambahkan fungsi.
+     */
+    const VORATH_CONFIG = {
+      GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwr-ZDC60mEXL8wwBTz59MJXwIa8rTDuLDQefnHMRHyq6wZSMvaDvBdiFd_1rcYqazh/exec',
+      IMGBB_API_KEY: 'dc3fb71e6714c88db36b011b06600e9e',
+      MAX_AVATAR_MB: 5,
+      DEFAULT_AVATAR_URL: 'https://i.ibb.co.com/7NdjjDKr/FOTO-USER-DEFAULT.png'
+    };
+  </script>
+
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 relative select-none">
+
+  <!-- Ambient Glow Backgrounds -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div class="glow-cyan absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#25f4ee]/20 blur-[130px]"></div>
+    <div class="glow-magenta absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-[#fe2c55]/20 blur-[130px]"></div>
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-indigo-600/10 blur-[160px]">
+    </div>
+  </div>
+
+  <main x-data="minimalRegisterForm()" x-init="init()"
+    class="w-full max-w-md glass-surface rounded-3xl p-6 sm:p-8 relative overflow-hidden transition-all duration-500">
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+      <div class="flex items-center space-x-3">
+        <!-- Ganti ./logo.png dengan gambar custom 1:1 milik kamu. -->
+        <div class="w-11 h-11 shrink-0 rounded-2xl overflow-hidden bg-white/5 border border-white/10">
+          <img src="https://i.ibb.co.com/1tBC2ngW/Logo-12-F8-F09.png" alt="Newbie Fams Official Website"
+            class="w-full h-full aspect-square object-cover" draggable="false">
+        </div>
+        <div>
+          <span class="text-xs uppercase tracking-widest font-mono-code text-[#25f4ee] block">Newbie Fams Official
+            Website</span>
+          <h2 class="text-lg font-bold tracking-tight text-white">Daftar Akun Baru</h2>
+        </div>
+      </div>
+    </header>
+
+    <!-- FORM STATE -->
+    <template x-if="!isSubmitted">
+      <form @submit.prevent="handleSubmit" class="space-y-5">
+
+        <!-- 1. NAMA LENGKAP -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-zinc-400 tracking-wider uppercase">Nama</label>
+          <div class="relative">
+            <input type="text" x-model="fullName" required placeholder="Contoh: 𝙕𝙚𝙣𝙪`𝙉𝙚𝙬𝙗𝙞𝙚"
+              class="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3.5 pl-11 text-white placeholder-zinc-600 outline-none input-vorath text-sm">
+            <i class="ph-bold ph-user absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg"></i>
+          </div>
+        </div>
+
+
+        <!-- TAMBAHAN: EMAIL GMAIL + OTP -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-zinc-400 tracking-wider uppercase">Email Gmail</label>
+          <div class="relative">
+            <input type="email" x-model="email" @input="handleEmailInput()" required placeholder="nama@gmail.com"
+              autocomplete="email"
+              class="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3.5 pl-11 text-white placeholder-zinc-600 outline-none input-vorath text-sm">
+            <i class="ph-bold ph-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg"></i>
+          </div>
+          <p x-show="emailError && !otpSent" x-text="emailError" class="text-xs text-rose-400"></p>
+
+          <!-- OTP VERIFIKASI EMAIL -->
+          <div x-show="isGmail && !emailVerified" x-transition
+            class="otp-verification-card rounded-3xl p-3.5 sm:p-4 space-y-3">
+            <div class="flex items-center justify-between px-1">
+              <div>
+                <div class="text-[10px] uppercase tracking-[0.2em] text-cyan-300 font-bold">Email Verification</div>
+                <div class="text-xs text-zinc-400 mt-0.5">Masukkan kode OTP</div>
+              </div>
+              <div x-show="otpSent && !emailVerified"
+                class="w-8 h-8 rounded-xl bg-cyan-400/10 border border-cyan-400/15 flex items-center justify-center">
+                <i class="ph ph-key text-cyan-300"></i>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <input type="text" x-model="otp" inputmode="numeric" autocomplete="one-time-code" x-ref="otpInput"
+                maxlength="8" placeholder="XXXXXXXX"
+                @input="otp = otp.replace(/\D/g, '').slice(0, 8); otpError=''; emailError=''; otpVerifyRequestId=''"
+                @keyup.enter="otp.length===8 && !otpBusy && otpExpiry>0 && verifyOtp()"
+                :disabled="otpBusy || emailVerified"
+                class="otp-code-input flex-1 min-w-0 bg-black/20 border border-white/10 rounded-2xl px-4 py-3.5 text-white placeholder-zinc-600 outline-none input-vorath font-mono-code text-sm font-bold disabled:opacity-50">
+
+              <button type="button" @click="requestOtp()"
+                :disabled="otpBusy || otpCooldown > 0 || !isGmail || emailVerified"
+                class="shrink-0 px-3 rounded-2xl bg-white/10 hover:bg-white/15 text-white text-[11px] font-semibold disabled:opacity-40 min-w-[104px]">
+                <span x-text="
+                  otpBusy && otpAction === 'send'
+                    ? ('Mengirim' + otpSendDots)
+                    : otpCooldown > 0
+                      ? ('Tunggu ' + formatOtpTime(otpCooldown))
+                      : (otpSent ? 'Kirim Ulang' : 'Kirim Kode')
+                "></span>
+              </button>
+            </div>
+            <div x-show="otpSent && !emailVerified" class="px-1 text-[11px] font-mono-code">
+              <span :class="otpExpired ? 'text-rose-300 font-semibold' : 'text-cyan-300 font-medium'"
+                x-text="otpExpired ? 'Kode Sudah Tidak Berlaku' : ('Kode Berlaku ' + formatOtpTime(otpExpiry))"></span>
+            </div>
+
+            <button type="button" x-show="!emailVerified" @click="verifyOtp()"
+              :disabled="otpBusy || !otpSent || otp.length !== 8 || otpExpiry <= 0"
+              class="w-full py-2.5 rounded-2xl bg-cyan-400/10 hover:bg-cyan-400/15 text-cyan-300 border border-cyan-400/20 text-xs font-semibold disabled:opacity-40">
+              <span x-text="
+                otpBusy && otpAction === 'verify'
+                  ? ('Verifikasi Kode' + otpVerifyDots)
+                  : (otpSent && otpExpiry <= 0
+                    ? 'Kode Kedaluwarsa'
+                    : (otpSent ? 'Verifikasi Kode' : 'Masukkan Kode OTP'))
+              "></span>
+            </button>
+
+            <div x-show="otpSent && otpExpiry <= 0 && !emailVerified"
+              class="rounded-2xl border border-rose-400/15 bg-rose-400/5 px-3 py-2 text-[11px] text-rose-300">
+              Kode OTP sudah kedaluwarsa. Tekan <b>Kirim Ulang</b> setelah cooldown selesai untuk mendapatkan kode baru.
+            </div>
+
+            <p x-show="otpError" x-text="otpError"
+              class="rounded-xl border border-rose-400/15 bg-rose-400/5 px-3 py-2 text-[11px] text-rose-300"></p>
+            <button type="button" x-show="otpError && !emailVerified"
+              @click="testGoogleScript().then(ok => { otpError = ok ? 'Web App aktif. Silakan tekan Verifikasi lagi.' : 'Web App utama belum merespons.' }).catch(err => { otpError = err.message })"
+              class="text-[10px] text-cyan-300 hover:text-white underline underline-offset-2">Tes koneksi
+              server</button>
+
+            <p x-show="otpSent && !emailVerified" class="text-[11px] text-zinc-500 flex items-center gap-1.5">
+              <i class="ph ph-shield-check text-cyan-300"></i>
+              <span>Masukkan kode yang dikirim ke <b x-text="email"></b>. Silahkan Cek Di Email Anda
+                <b>Inbox/Spam</b></span>
+            </p>
+          </div>
+
+          <p x-show="!isGmail && email" class="text-[11px] text-zinc-500">
+            Gunakan alamat <b>@gmail.com</b> untuk menerima kode verifikasi.
+          </p>
+
+          <div x-show="emailVerified" class="flex items-center gap-2 text-xs text-emerald-400">
+            <i class="ph-bold ph-check-circle"></i>
+            <span>Email Berhasil Diverifikasi</span>
+          </div>
+        </div>
+
+        <!-- 2. USERNAME TIKTOK -->
+
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-semibold text-zinc-400 tracking-wider uppercase">Username TikTok</label>
+            <span class="text-xs font-mono-code" x-show="tiktokUsername.length > 0" x-text="
+                tiktokStatus === 'checking'
+                  ? ('Mengecek' + usernameCheckDots)
+                  : tiktokStatus === 'available'
+                    ? 'Tersedia'
+                    : tiktokStatus === 'reserved'
+                      ? 'Terpakai'
+                      : tiktokStatus === 'error'
+                        ? 'Gagal Mengecek'
+                        : ''
+              " :class="
+                tiktokStatus === 'checking'
+                  ? 'text-amber-400'
+                  : tiktokStatus === 'available'
+                    ? 'text-emerald-400'
+                    : tiktokStatus === 'reserved'
+                      ? 'text-rose-400'
+                      : 'text-zinc-500'
+              "></span>
+          </div>
+
+          <div class="relative">
+            <span
+              class="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 font-mono-code font-semibold select-none">@</span>
+            <input type="text" x-model="tiktokUsername" @input="handleTikTokInput" required
+              placeholder="username_tiktok"
+              class="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3.5 pl-9 pr-11 text-white placeholder-zinc-600 outline-none input-vorath font-mono-code text-sm">
+          </div>
+        </div>
+
+
+        <!-- 3. NOMOR WHATSAPP NEWBIE FAMS -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-semibold text-zinc-400 tracking-wider uppercase">Nomor WhatsApp</label>
+            <span class="text-xs font-mono-code" x-show="whatsapp.length > 0" x-text="
+                whatsappStatus === 'checking'
+                  ? ('Mengecek' + whatsappCheckDots)
+                  : whatsappStatus === 'available'
+                    ? 'Terdaftar'
+                    : whatsappStatus === 'reserved'
+                      ? 'Tidak Terdaftar'
+                      : whatsappStatus === 'error'
+                        ? 'Gagal Mengecek'
+                        : ''
+              " :class="
+                whatsappStatus === 'checking'
+                  ? 'text-amber-400'
+                  : whatsappStatus === 'available'
+                    ? 'text-emerald-400'
+                    : whatsappStatus === 'reserved'
+                      ? 'text-rose-400'
+                      : 'text-zinc-500'
+              "></span>
+          </div>
+
+          <div class="relative">
+            <input type="tel" x-model="whatsapp" @input="handleWhatsappInput" required inputmode="numeric"
+              autocomplete="tel" placeholder="08xxxxxxxxxx"
+              class="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3.5 pl-11 text-white placeholder-zinc-600 outline-none input-vorath font-mono-code text-sm">
+            <i class="ph-bold ph-whatsapp-logo absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg"></i>
+          </div>
+
+          <p class="text-[11px] text-zinc-500 px-1">
+            Nomor harus terdaftar di grup Newbie Fams.
+          </p>
+        </div>
+
+        <!-- 3. PASSWORD & SECURITY GAUGE -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-zinc-400 tracking-wider uppercase">Password</label>
+          <p class="text-[11px] text-zinc-500 px-1">Buat Password Anda Sendiri, Jangan Menggunakan Data Asli Anda.</p>
+          <div class="relative">
+            <input :type="showPassword ? 'text' : 'password'" x-model="password" required
+              placeholder="Buat password Anda sendiri" maxlength="16" @input="checkPasswordTyping($event.target.value)"
+              class="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3.5 pl-11 pr-11 text-white placeholder-zinc-600 outline-none input-vorath text-sm">
+            <i class="ph-bold ph-lock-key absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg"></i>
+            <button type="button" @click="showPassword = !showPassword"
+              class="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer">
+              <i class="ph-bold" :class="showPassword ? 'ph-eye' : 'ph-eye-slash'"></i>
+            </button>
+          </div>
+
+          <!-- Password status: langsung mengecek saat mengetik -->
+          <div x-show="true" x-transition class="text-[11px] px-1 pt-0.5 min-h-[18px]">
+            <span class="font-semibold transition-all duration-150"
+              :class="passwordChecking ? 'text-zinc-400' : password.length < 8 ? 'text-rose-400' : passwordScore === 1 ? 'text-rose-400' : passwordScore === 2 ? 'text-amber-400' : passwordScore === 3 ? 'text-cyan-400' : 'text-emerald-400'"
+              x-text="passwordChecking ? ('Memeriksa' + passwordCheckDots) : passwordStatusText"></span>
+          </div>
+        </div>
+
+        <!-- SUBMIT BUTTON -->
+        <button type="submit" :disabled="tiktokStatus !== 'available' || passwordScore < 2 || submitBusy"
+          class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#25f4ee] via-[#00c2ff] to-[#fe2c55] text-black font-bold text-sm shadow-xl shadow-[#25f4ee]/20 hover:opacity-95 active:scale-[0.99] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center space-x-2 cursor-pointer mt-2">
+          <span>Daftar Sekarang</span>
+          <i class="ph-bold ph-arrow-right"></i>
+        </button>
+
+      </form>
+    </template>
+
+    <!-- SUCCESS STATE (No popup alerts) -->
+    <template x-if="isSubmitted && !uploadMode">
+      <div class="text-center py-4 space-y-5" x-transition:enter="transition ease-out duration-400"
+        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+
+        <div
+          class="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
+          <i class="ph-bold ph-sparkle text-3xl"></i>
+        </div>
+
+        <div>
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono-code bg-emerald-500/10 text-emerald-400 mb-2">
+            Registrasi Berhasil
+          </span>
+          <h2 class="text-xl font-bold text-white">Selamat Datang, <span x-text="fullName"></span>!</h2>
+          <p class="text-xs text-zinc-400 mt-1">
+            Akun Anda berhasil ditautkan ke TikTok @<span class="text-[#25f4ee] font-mono-code"
+              x-text="tiktokUsername"></span>.
+          </p>
+        </div>
+
+        <button type="button" @click="resetForm()"
+          class="w-full py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer">
+          <i class="ph-bold ph-arrow-counter-clockwise"></i>
+          <span>Daftar Akun Lain</span>
+        </button>
+      </div>
+    </template>
+
+
+    <!-- Upload/skip langsung menyimpan Avatar ke Sheet -->
+    <template x-if="uploadMode">
+      <div class="space-y-5 mt-6 pt-6 border-t border-white/10">
+
+        <!-- Loading proses upload foto / penyelesaian pendaftaran -->
+        <div x-show="uploadBusy && !registrationFinalized" x-transition
+          class="rounded-3xl border border-cyan-400/20 bg-cyan-400/[0.04] p-6 text-center space-y-5">
+          <div class="relative w-20 h-20 mx-auto">
+            <div class="absolute inset-0 rounded-full border-4 border-white/10"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-[#25f4ee] border-r-[#00c2ff] animate-spin"></div>
+            <div class="absolute inset-2 rounded-full bg-white/[0.04] flex items-center justify-center">
+              <i class="ph-bold ph-cloud-arrow-up text-2xl text-[#25f4ee] animate-pulse"></i>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-base font-bold text-white">Akun Anda Sedang Dibuat.</h3>
+            <p class="text-xs text-zinc-400 mt-2">
+              <span class="loading-wait-text">Mohon Tunggu Sebentar<span class="loading-dots"></span></span>
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-zinc-500">Progress</span>
+              <span class="font-bold text-cyan-300" x-text="uploadProgress + '%'"></span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-r from-[#25f4ee] via-[#00c2ff] to-[#fe2c55] transition-all duration-500 ease-out"
+                :style="'width: ' + uploadProgress + '%'"></div>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-zinc-500">Akun sedang diproses, mohon jangan menutup halaman.</p>
+        </div>
+
+        <div x-show="!registrationFinalized && !uploadBusy" x-transition class="space-y-5">
+          <div>
+            <h3 class="text-lg font-bold text-white">Foto Profil</h3>
+            <p class="text-xs text-zinc-400 mt-1">Upload foto atau pilih <b class="text-white">Lewati</b>. Jika
+              dilewati, pendaftaran langsung diselesaikan dengan foto default.</p>
+          </div>
+
+          <div class="flex justify-center">
+            <div
+              class="w-28 h-28 rounded-full overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
+              <img x-show="avatarPreview" :src="avatarPreview" class="w-full h-full object-cover">
+              <i x-show="!avatarPreview" class="ph-bold ph-user text-4xl text-zinc-600"></i>
+            </div>
+          </div>
+
+          <label class="block cursor-pointer">
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" @change="chooseAvatar($event)"
+              class="hidden">
+            <div
+              class="w-full rounded-2xl border border-dashed border-white/15 bg-white/[.03] hover:bg-white/[.06] p-5 text-center">
+              <i class="ph-bold ph-upload-simple text-2xl text-[#25f4ee]"></i>
+              <div class="text-sm font-semibold mt-2">Pilih Foto</div>
+              <div class="text-[11px] text-zinc-500 mt-1">JPG / PNG / WEBP / GIF • maksimal 5 MB</div>
+            </div>
+          </label>
+
+          <p x-show="uploadMessage" x-text="uploadMessage" :class="uploadOk ? 'text-emerald-400' : 'text-rose-400'"
+            class="text-xs"></p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button type="button" @click="uploadAvatar()" :disabled="uploadBusy || !avatarFile"
+              class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#25f4ee] via-[#00c2ff] to-[#fe2c55] text-black font-bold text-sm disabled:opacity-40">
+              <span x-text="uploadBusy ? 'Meng-upload...' : 'Upload Foto' "></span>
+            </button>
+            <button type="button" @click="skipAvatar()" :disabled="uploadBusy"
+              class="w-full py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm border border-white/10 disabled:opacity-40">
+              <i class="ph-bold ph-skip-forward mr-1"></i> Lewati
+            </button>
+          </div>
+        </div>
+
+        <!-- Akun berhasil dibuat -->
+        <div x-show="registrationFinalized" x-transition
+          class="space-y-4 rounded-3xl border border-emerald-400/20 bg-emerald-400/[0.04] p-4">
+          <div class="text-center">
+            <div
+              class="w-12 h-12 rounded-2xl bg-emerald-400/10 border border-emerald-400/20 text-emerald-300 flex items-center justify-center mx-auto">
+              <i class="ph-bold ph-check-circle text-2xl"></i>
+            </div>
+            <h4 class="text-base font-bold text-white mt-3">Pendaftaran Akun Selesai</h4>
+            <p class="text-[11px] text-zinc-400 mt-1">Foto profil dan data akun berhasil disimpan.</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-2 text-xs">
+            <div class="rounded-2xl bg-black/20 border border-white/5 px-3 py-2.5 flex justify-between gap-3">
+              <span class="text-zinc-500">NF-ID</span>
+              <span class="font-mono-code font-semibold text-cyan-300 break-all" x-text="nfId"></span>
+            </div>
+            <div class="rounded-2xl bg-black/20 border border-white/5 px-3 py-2.5 flex justify-between gap-3">
+              <span class="text-zinc-500">Nama</span>
+              <span class="font-semibold text-white text-right" x-text="fullName"></span>
+            </div>
+            <div class="rounded-2xl bg-black/20 border border-white/5 px-3 py-2.5 flex justify-between gap-3">
+              <span class="text-zinc-500">Username TikTok</span>
+              <span class="font-mono-code font-semibold text-white text-right" x-text="'@' + tiktokUsername"></span>
+            </div>
+            <div class="rounded-2xl bg-black/20 border border-white/5 px-3 py-2.5 flex justify-between gap-3">
+              <span class="text-zinc-500">Email</span>
+              <span class="font-mono-code font-semibold text-white text-right break-all" x-text="email"></span>
+            </div>
+            <div class="rounded-2xl bg-black/20 border border-white/5 px-3 py-2.5 flex justify-between gap-3">
+              <span class="text-zinc-500">Balance</span>
+              <span class="font-semibold text-emerald-300">26 NfC</span>
+            </div>
+            <div class="rounded-2xl bg-black/20 border border-white/5 px-3 py-2.5 flex justify-between gap-3">
+              <span class="text-zinc-500">Level</span>
+              <span class="font-semibold text-white">1</span>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-cyan-400/15 bg-cyan-400/[0.05] px-3.5 py-3">
+            <div class="flex items-start gap-2.5">
+              <i class="ph-bold ph-info text-cyan-300 text-lg mt-0.5"></i>
+              <div class="text-[11px] text-zinc-300 leading-relaxed">
+                Akun kamu sudah siap digunakan. Silakan lanjut ke halaman utama untuk melihat informasi akun dan fitur
+                lainnya.
+              </div>
+            </div>
+          </div>
+
+          <a href="../informasi.html"
+            class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#25f4ee] via-[#00c2ff] to-[#fe2c55] text-black font-bold text-sm flex items-center justify-center gap-2">
+            <i class="ph-bold ph-arrow-right"></i>
+            <span>Ke Halaman Informasi Akun</span>
+          </a>
+        </div>
+      </div>
+    </template>
+
+    <footer x-show="!uploadMode" class="mt-6 pt-4 border-t border-white/10 text-center text-xs text-zinc-500">
+      Sudah punya akun? <a href="../informasi.html" class="text-[#25f4ee] hover:underline font-medium">Masuk</a>
+    </footer>
+  </main>
+
+  <script>
+    function minimalRegisterForm() {
+      return {
+        isSubmitted: false,
+        fullName: '',
+        tiktokUsername: '',
+        password: '',
+        showPassword: false,
+        passwordChecking: false,
+        passwordCheckDots: '.',
+        passwordCheckTimer: null,
+        passwordCheckTimeout: null,
+        tiktokStatus: 'idle',
+        checkTimer: null,
+        usernameCheckSeq: 0,
+        whatsapp: '',
+        whatsappStatus: 'idle',
+        whatsappCheckTimer: null,
+        whatsappCheckSeq: 0,
+        usernameCheckDots: '.',
+        usernameCheckAnimTimer: null,
+        whatsappCheckDots: '.',
+        whatsappCheckAnimTimer: null,
+        // TAMBAHAN STATE — tidak menghapus state asli
+        email: '',
+        emailError: '',
+        otpError: '',
+        otp: '',
+        otpSent: false,
+        emailVerified: false,
+        verifiedToken: '',
+        otpBusy: false,
+        otpAction: '',
+        otpSendDots: '.',
+        otpSendAnimTimer: null,
+        otpVerifyDots: '.',
+        otpVerifyAnimTimer: null,
+        otpCooldown: 0,
+        otpTimer: null,
+        otpExpiry: 0,
+        otpExpired: false,
+        otpExpiryTimer: null,
+        otpCooldownUntil: 0,
+        otpExpiryUntil: 0,
+        otpVerifyRequestId: '',
+        submitBusy: false,
+        nfId: '',
+        rowNumber: null,
+        uploadMode: false,
+        avatarFile: null,
+        avatarPreview: '',
+        uploadBusy: false,
+        uploadProgress: 0,
+        progressTimer: null,
+        uploadMessage: '',
+        uploadOk: false,
+        uploadCompleted: false,
+        accountInfo: null,
+        pendingAvatarUrl: '',
+        avatarReady: false,
+        avatarIsDefault: false,
+        registrationFinalized: false,
+
+        init() {
+          // Refresh = mulai ulang seluruh form.
+          // Satu-satunya progres yang dipertahankan adalah OTP di localStorage.
+          // Email TIDAK otomatis diisi; user harus memasukkan email yang sama
+          // agar progres OTP lama dipulihkan.
+          try {
+            localStorage.removeItem('vorath_auth');
+            localStorage.removeItem('vorath_registration_complete');
+            localStorage.removeItem('vorath_avatar');
+          } catch (_) { }
+
+          this.email = '';
+          this.fullName = '';
+          this.tiktokUsername = '';
+          this.password = '';
+          this.passwordChecking = false;
+          this.passwordCheckDots = '.';
+          clearInterval(this.passwordCheckTimer);
+          clearTimeout(this.passwordCheckTimeout);
+          this.whatsapp = '';
+          this.nfId = '';
+          this.rowNumber = null;
+          this.uploadMode = false;
+          this.isSubmitted = false;
+          this.accountInfo = null;
+          this.pendingAvatarUrl = '';
+          this.avatarPreview = '';
+          this.avatarFile = null;
+          this.avatarReady = false;
+          this.avatarIsDefault = false;
+          this.uploadCompleted = false;
+          this.registrationFinalized = false;
+
+          // Pastikan UI OTP juga kosong sampai email yang sama dimasukkan.
+          this.otp = '';
+          this.otpSent = false;
+          this.otpEmail = '';
+          this.verifiedToken = '';
+          this.emailVerified = false;
+          this.resetOtpTimers();
+
+          if (location.hash) {
+            history.replaceState(null, '', location.pathname + location.search);
+          }
+
+          window.addEventListener('hashchange', () => {
+            // Jangan memulihkan progres lama setelah refresh.
+            // #upload hanya boleh muncul dari alur registrasi saat ini.
+            if (location.hash.toLowerCase() !== '#upload') {
+              this.uploadMode = false;
+            }
+          });
+        },
+
+        async handleTikTokInput() {
+          this.tiktokUsername = this.tiktokUsername
+            .replace(/^@/, '')
+            .replace(/[^A-Za-z0-9._-]/g, '')
+            .slice(0, 30);
+
+          clearTimeout(this.checkTimer);
+
+          const username = this.tiktokUsername.trim();
+          const seq = ++this.usernameCheckSeq;
+
+          if (!username || username.length < 1) {
+            this.tiktokStatus = 'idle';
+            this.stopUsernameCheckAnimation();
+            return;
+          }
+
+          this.tiktokStatus = 'checking';
+          this.startUsernameCheckAnimation();
+
+          this.checkTimer = setTimeout(async () => {
+            try {
+              const result = await this.api('checkUsername', { username });
+
+              // Abaikan hasil request lama jika user sudah mengetik username lain.
+              if (seq !== this.usernameCheckSeq) return;
+
+              if (!result || !result.success) {
+                this.stopUsernameCheckAnimation();
+                this.tiktokStatus = 'error';
+                return;
+              }
+
+              this.stopUsernameCheckAnimation();
+              this.tiktokStatus = result.available ? 'available' : 'reserved';
+            } catch (_) {
+              if (seq !== this.usernameCheckSeq) return;
+              this.stopUsernameCheckAnimation();
+              this.tiktokStatus = 'error';
+            }
+          }, 450);
+        },
+
+        async handleWhatsappInput() {
+          // Simpan hanya angka, tetapi pengguna tetap bebas mengetik +62/spasi/tanda hubung.
+          this.whatsapp = this.whatsapp
+            .replace(/[^\d+]/g, '')
+            .replace(/(?!^)\+/g, '')
+            .slice(0, 18);
+
+          clearTimeout(this.whatsappCheckTimer);
+
+          const raw = this.whatsapp.trim();
+          const seq = ++this.whatsappCheckSeq;
+
+          if (!raw) {
+            this.whatsappStatus = 'idle';
+            this.stopWhatsappCheckAnimation();
+            return;
+          }
+
+          const normalized = this.normalizeWhatsapp(raw);
+
+          // Mulai pengecekan dari karakter pertama.
+          // Untuk input yang belum menjadi nomor valid, tetap tampilkan
+          // animasi pengecekan lalu server yang menentukan hasilnya.
+          this.whatsappStatus = 'checking';
+          this.startWhatsappCheckAnimation();
+
+          this.whatsappCheckTimer = setTimeout(async () => {
+            try {
+              const result = await this.api('checkWhatsapp', {
+                whatsapp: normalized
+              });
+
+              if (seq !== this.whatsappCheckSeq) return;
+
+              if (!result || !result.success) {
+                this.stopWhatsappCheckAnimation();
+                this.whatsappStatus = 'error';
+                return;
+              }
+
+              this.stopWhatsappCheckAnimation();
+              this.whatsappStatus = result.registered ? 'available' : 'reserved';
+            } catch (_) {
+              if (seq !== this.whatsappCheckSeq) return;
+              this.stopWhatsappCheckAnimation();
+              this.whatsappStatus = 'error';
+            }
+          }, 450);
+        },
+
+        startUsernameCheckAnimation() {
+          if (this.usernameCheckAnimTimer) return;
+          if (!/^\.+$/.test(this.usernameCheckDots || '')) this.usernameCheckDots = '.';
+          this.usernameCheckAnimTimer = setInterval(() => {
+            this.usernameCheckDots = this.usernameCheckDots === '...' ? '.' : this.usernameCheckDots + '.';
+          }, 350);
+        },
+
+        stopUsernameCheckAnimation() {
+          clearInterval(this.usernameCheckAnimTimer);
+          this.usernameCheckAnimTimer = null;
+          this.usernameCheckDots = '.';
+        },
+
+        startWhatsappCheckAnimation() {
+          if (this.whatsappCheckAnimTimer) return;
+          if (!/^\.+$/.test(this.whatsappCheckDots || '')) this.whatsappCheckDots = '.';
+          this.whatsappCheckAnimTimer = setInterval(() => {
+            this.whatsappCheckDots = this.whatsappCheckDots === '...' ? '.' : this.whatsappCheckDots + '.';
+          }, 350);
+        },
+
+        stopWhatsappCheckAnimation() {
+          clearInterval(this.whatsappCheckAnimTimer);
+          this.whatsappCheckAnimTimer = null;
+          this.whatsappCheckDots = '.';
+        },
+
+        normalizeWhatsapp(value) {
+          let s = String(value || '').trim().replace(/[^\d+]/g, '');
+
+          if (s.indexOf('+62') === 0) {
+            s = '0' + s.slice(3);
+          } else if (s.indexOf('+60') === 0) {
+            s = '0' + s.slice(3);
+          } else if (s.indexOf('62') === 0) {
+            s = '0' + s.slice(2);
+          } else if (s.indexOf('60') === 0) {
+            s = '0' + s.slice(2);
+          }
+
+          s = s.replace(/\D/g, '');
+          if (s.indexOf('0') !== 0 && s) s = '0' + s;
+
+          return s.slice(0, 15);
+        },
+
+        checkPasswordTyping(value) {
+          this.password = String(value || '').slice(0, 16);
+          clearTimeout(this.passwordCheckTimeout);
+
+          if (!this.password) {
+            this.passwordChecking = false;
+            this.passwordCheckDots = '.';
+            clearInterval(this.passwordCheckTimer);
+            this.passwordCheckTimer = null;
+            return;
+          }
+
+          this.passwordChecking = true;
+
+          // Jangan restart animasi setiap kali karakter baru diketik.
+          if (!this.passwordCheckTimer) {
+            if (!/^\.+$/.test(this.passwordCheckDots || '')) this.passwordCheckDots = '.';
+            this.passwordCheckTimer = setInterval(() => {
+              this.passwordCheckDots = this.passwordCheckDots === '...' ? '.' : this.passwordCheckDots + '.';
+            }, 350);
+          }
+
+          // Hanya waktu menampilkan hasil password yang di-reset saat mengetik.
+          this.passwordCheckTimeout = setTimeout(() => {
+            clearInterval(this.passwordCheckTimer);
+            this.passwordCheckTimer = null;
+            this.passwordCheckTimeout = null;
+            this.passwordCheckDots = '.';
+            this.passwordChecking = false;
+          }, 900);
+        },
+
+        get passwordStatusText() {
+          const val = this.password || '';
+          if (!val) return 'Password Belum Dibuat';
+          if (val.length < 8) return 'Password Belum Memenuhi Syarat';
+
+          const labels = {
+            1: 'Password Anda Lemah',
+            2: 'Password Anda Cukup',
+            3: 'Password Anda Kuat',
+            4: 'Password Anda Sangat Kuat'
+          };
+          return labels[this.passwordScore] || 'Password Anda Lemah';
+        },
+
+        get passwordChecks() {
+          const val = this.password || '';
+          return {
+            length: val.length >= 8,
+            number: /\d/.test(val),
+            uppercase: /[A-Z]/.test(val),
+            symbol: /[!@#$%^&*(),.?":{}|<>]/.test(val)
+          };
+        },
+
+        get passwordScore() {
+          const c = this.passwordChecks;
+          let score = 0;
+          if (c.length) score++;
+          if (c.number) score++;
+          if (c.uppercase) score++;
+          if (c.symbol) score++;
+          return score;
+        },
+
+        get passwordStrengthLabel() {
+          const labels = ['Belum diisi', 'Lemah', 'Cukup', 'Kuat', 'Sangat Kuat'];
+          return labels[this.passwordScore];
+        },
+
+        get passwordBarColor() {
+          const colors = [
+            'bg-white/10',
+            'bg-rose-500',
+            'bg-amber-400',
+            'bg-cyan-400',
+            'bg-emerald-400'
+          ];
+          return colors[this.passwordScore];
+        },
+
+        async handleSubmit() {
+          if (
+            !this.fullName.trim() ||
+            !this.tiktokUsername.trim() ||
+            !this.whatsapp.trim() ||
+            this.password.length < 8 || this.password.length > 16 ||
+            this.tiktokStatus !== 'available' ||
+            this.whatsappStatus !== 'available'
+          ) {
+            return;
+          }
+
+          const email = String(this.email || '').trim().toLowerCase();
+          if (!/^[A-Za-z0-9._%+-]+@gmail\.com$/i.test(email)) {
+            this.emailError = 'Email wajib menggunakan @gmail.com.';
+            return;
+          }
+
+          if (!this.emailVerified || !this.verifiedToken) {
+            this.emailError = 'Email belum diverifikasi. Kirim kode OTP ke Gmail lalu verifikasi.';
+            return;
+          }
+
+          if (!VORATH_CONFIG.GOOGLE_SCRIPT_URL || VORATH_CONFIG.GOOGLE_SCRIPT_URL.includes('PASTE_')) {
+            this.emailError = 'URL Google Apps Script belum diisi.';
+            return;
+          }
+
+          this.submitBusy = true;
+          this.emailError = '';
+
+          try {
+            // Data akun belum ditulis ke Sheet pada tahap ini.
+            // User harus menyiapkan Avatar (upload atau Lewati) lalu klik Daftarkan.
+            this.isSubmitted = true;
+            this.uploadMode = true;
+            this.avatarReady = false;
+            this.avatarIsDefault = false;
+            this.pendingAvatarUrl = '';
+            this.registrationFinalized = false;
+            this.uploadMessage = '';
+            location.hash = '#upload';
+          } catch (err) {
+            this.emailError = err.message || 'Gagal menyimpan akun.';
+          } finally {
+            this.submitBusy = false;
+          }
+        },
+
+        api(action, data) {
+          const rawUrl = String(VORATH_CONFIG.GOOGLE_SCRIPT_URL || '').trim();
+
+          if (!rawUrl || rawUrl.includes('PASTE_')) {
+            return Promise.reject(new Error('URL Google Apps Script belum diisi.'));
+          }
+
+          let parsedUrl;
+          try {
+            parsedUrl = new URL(rawUrl);
+          } catch (_) {
+            return Promise.reject(new Error('URL Google Apps Script tidak valid.'));
+          }
+
+          if (
+            parsedUrl.protocol !== 'https:' ||
+            parsedUrl.hostname !== 'script.google.com' ||
+            !/^\/macros\/s\/[^/]+\/exec$/i.test(parsedUrl.pathname)
+          ) {
+            return Promise.reject(new Error(
+              'URL Google Apps Script tidak valid. Gunakan URL Web App utama yang berakhiran /exec.'
+            ));
+          }
+
+          // Hanya verifikasi OTP yang otomatis di-retry.
+          // registerVerifyOtp memakai requestId yang idempotent di server,
+          // jadi retry tidak membuat OTP menjadi "terpakai dua kali".
+          const isOtpVerify = action === 'registerVerifyOtp';
+          const isOtpRequest = action === 'registerRequestOtp';
+          const isOtpStatus = action === 'registerOtpStatus';
+          const maxAttempts = isOtpVerify ? 3 : 1;
+          const timeoutMs =
+            isOtpVerify ? 25000 :
+              isOtpRequest ? 60000 :
+                isOtpStatus ? 25000 :
+                  30000;
+
+          const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+          const doJsonpAttempt = (attempt) => new Promise((resolve, reject) => {
+            const callbackName =
+              '__vorathReg_' +
+              Date.now() + '_' +
+              Math.random().toString(36).slice(2) + '_' + attempt;
+
+            const params = new URLSearchParams();
+            params.set('action', action);
+            params.set('callback', callbackName);
+            params.set('_ts', String(Date.now()));
+
+            Object.entries(data || {}).forEach(([key, value]) => {
+              params.set(key, value == null ? '' : String(value));
+            });
+
+            const script = document.createElement('script');
+            script.async = true;
+            script.charset = 'UTF-8';
+
+            let finished = false;
+            let timer = null;
+
+            const removeCallbackLater = () => {
+              // Google Apps Script kadang sudah memproses request tetapi
+              // callback JSONP datang terlambat. Jangan langsung menghapus
+              // callback saat timeout karena itu menghasilkan:
+              // "Uncaught ReferenceError: __vorathReg_... is not defined".
+              setTimeout(() => {
+                try { delete window[callbackName]; } catch (_) { }
+              }, 120000);
+            };
+
+            const cleanup = (keepCallback = false) => {
+              if (finished) return;
+              finished = true;
+              if (timer) clearTimeout(timer);
+              if (!keepCallback) {
+                try { delete window[callbackName]; } catch (_) { }
+              } else {
+                removeCallbackLater();
+              }
+              script.remove();
+            };
+
+            window[callbackName] = (result) => {
+              if (!result || typeof result !== 'object') {
+                cleanup(false);
+                reject(new Error('Response server tidak valid.'));
+                return;
+              }
+              cleanup(false);
+              resolve(result);
+            };
+
+            script.onerror = () => {
+              // Pertahankan callback sementara karena response bisa tetap
+              // datang setelah browser menerima error jaringan/redirect.
+              cleanup(true);
+              reject(new Error('JSONP_LOAD_ERROR'));
+            };
+
+            timer = setTimeout(() => {
+              cleanup(true);
+              reject(new Error('JSONP_TIMEOUT'));
+            }, timeoutMs);
+
+            const baseUrl = rawUrl.replace(/[?&]+$/, '');
+            script.src =
+              baseUrl +
+              (baseUrl.includes('?') ? '&' : '?') +
+              params.toString();
+
+            document.head.appendChild(script);
+          });
+
+          const run = async () => {
+            let lastError = null;
+
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+              try {
+                const result = await doJsonpAttempt(attempt);
+                return result;
+              } catch (err) {
+                lastError = err;
+
+                if (!isOtpVerify || attempt >= maxAttempts) break;
+
+                // Backoff pendek untuk mengatasi redirect/cold-start/transient
+                // error pada Google Apps Script tanpa membuat user spam klik.
+                await sleep(1200 * attempt);
+              }
+            }
+
+            if (isOtpVerify && lastError) {
+              if (lastError.message === 'JSONP_TIMEOUT') {
+                throw new Error(
+                  'Server sedang lambat merespons. Sistem sudah mencoba 3 kali. ' +
+                  'Jangan minta OTP baru. Tekan tombol verifikasi lagi menggunakan kode yang sama.'
+                );
+              }
+              if (lastError.message === 'JSONP_LOAD_ERROR') {
+                throw new Error(
+                  'Koneksi ke Web App Google Apps Script sedang terganggu. ' +
+                  'Sistem sudah mencoba 3 kali. Gunakan kode OTP yang sama lalu tekan Verifikasi lagi.'
+                );
+              }
+              throw lastError;
+            }
+
+            if (lastError) throw lastError;
+            throw new Error('Request gagal.');
+          };
+
+          return run();
+        },
+
+        async testGoogleScript() {
+          try {
+            const result = await this.api('ping', {});
+            return !!(result && result.success);
+          } catch (_) {
+            return false;
+          }
+        },
+
+        isValidGmail(value) {
+          return /^[A-Za-z0-9._%+-]+@gmail\.com$/i.test(String(value || '').trim());
+        },
+
+        get isGmail() {
+          return this.isValidGmail(this.email);
+        },
+
+        async showMailAuthorizationHint() {
+          try {
+            const status = await this.api('registerAuthStatus', {});
+            if (status && status.authorizationUrl) {
+              this.emailError = 'MailApp belum diotorisasi. Buka link otorisasi menggunakan akun pemilik/deployer Apps Script, izinkan akses, lalu deploy versi terbaru: ' + status.authorizationUrl;
+            }
+          } catch (_) { }
+        },
+
+        handleEmailInput() {
+          const current = String(this.email || '').trim().toLowerCase();
+
+          // Setiap perubahan email membatalkan verifikasi email pada UI.
+          this.emailError = '';
+          this.otpError = '';
+          this.emailVerified = false;
+          this.verifiedToken = '';
+          this.otpVerifyRequestId = '';
+
+          // Saat email belum lengkap, jangan hapus OTP tersimpan.
+          // Ini membuat user bisa mengetik kembali email yang sama dan
+          // mendapatkan progres OTP lama.
+          if (!current || !/^[A-Za-z0-9._%+-]+@gmail\.com$/i.test(current)) {
+            this.resetVisibleOtpProgress();
+            return;
+          }
+
+          let saved = null;
+          try {
+            const raw = localStorage.getItem('vorath_otp_state');
+            if (raw) saved = JSON.parse(raw);
+          } catch (_) {
+            saved = null;
+          }
+
+          const savedEmail = saved && saved.email
+            ? String(saved.email).trim().toLowerCase()
+            : '';
+
+          if (savedEmail && savedEmail === current) {
+            this.restoreOtpStateForEmail(current, saved);
+            return;
+          }
+
+          // Email Gmail yang berbeda = OTP lama ikut di-reset.
+          if (savedEmail && savedEmail !== current) {
+            this.clearOtpState();
+            this.resetVisibleOtpProgress();
+            return;
+          }
+
+          // Belum ada OTP tersimpan untuk email ini.
+          this.resetVisibleOtpProgress();
+        },
+
+        resetVisibleOtpProgress() {
+          this.otp = '';
+          this.otpSent = false;
+          this.otpEmail = '';
+          this.resetOtpTimers();
+        },
+
+        saveOtpState() {
+          try {
+            const email = String(this.otpEmail || this.email || '').trim().toLowerCase();
+            if (!email) return;
+
+            localStorage.setItem('vorath_otp_state', JSON.stringify({
+              email: email,
+              otpSent: !!this.otpSent,
+              otpCooldown: Number(this.otpCooldown || 0),
+              otpExpiresAt: Number(this.otpExpiresAt || 0),
+              otpRequestedAt: Number(this.otpRequestedAt || 0),
+              otpEmail: email
+            }));
+          } catch (_) { }
+        },
+
+        clearOtpState() {
+          try { localStorage.removeItem('vorath_otp_state'); } catch (_) { }
+          this.otp = '';
+          this.otpSent = false;
+          this.otpCooldown = 0;
+          this.otpExpiresAt = 0;
+          this.otpRequestedAt = 0;
+          this.otpEmail = '';
+          this.verifiedToken = '';
+          this.emailVerified = false;
+        },
+
+        restoreOtpStateForEmail(email, saved) {
+          try {
+            const normalized = String(email || '').trim().toLowerCase();
+            if (!normalized || !saved) return;
+
+            const savedEmail = String(saved.email || saved.otpEmail || '').trim().toLowerCase();
+            if (savedEmail !== normalized) return;
+
+            const now = Date.now();
+            const expiresAt = Number(saved.otpExpiresAt || 0);
+
+            this.email = normalized;
+            this.otpEmail = normalized;
+            this.otpSent = !!saved.otpSent;
+            this.otpRequestedAt = Number(saved.otpRequestedAt || 0);
+            this.otpExpiresAt = expiresAt;
+
+            // Kode OTP tidak pernah disimpan di browser.
+            // User tetap memasukkan kode dari Gmail secara manual.
+            this.otp = '';
+            this.emailVerified = false;
+            this.verifiedToken = '';
+
+            if (expiresAt > now && this.otpSent) {
+              const cooldownLeft = Math.max(
+                0,
+                Math.ceil((this.otpRequestedAt + 90000 - now) / 1000)
+              );
+              const expiryLeft = Math.max(
+                0,
+                Math.ceil((expiresAt - now) / 1000)
+              );
+
+              this.startOtpCooldown(cooldownLeft);
+              this.startOtpExpiry(expiryLeft);
+              this.saveOtpState();
+              this.otpError = '';
+              return;
+            }
+
+            // OTP sudah kedaluwarsa.
+            this.clearOtpState();
+          } catch (_) {
+            this.resetVisibleOtpProgress();
+          }
+        },
+
+        restoreOtpState() {
+          // Dipertahankan sebagai compatibility helper.
+          // Tidak dipanggil saat init; pemulihan hanya terjadi setelah
+          // user memasukkan email yang sama.
+          try {
+            const raw = localStorage.getItem('vorath_otp_state');
+            if (!raw) return;
+            const saved = JSON.parse(raw);
+            const email = String(this.email || '').trim().toLowerCase();
+            if (email && saved && String(saved.email || '').trim().toLowerCase() === email) {
+              this.restoreOtpStateForEmail(email, saved);
+            }
+          } catch (_) { }
+        },
+
+        formatOtpTime(seconds) {
+          const total = Math.max(0, Number(seconds || 0));
+          const m = Math.floor(total / 60);
+          const sec = total % 60;
+          return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+        },
+
+        startOtpCooldown(seconds = 90) {
+          clearInterval(this.otpTimer);
+          const total = Math.max(0, Number(seconds || 0));
+          this.otpCooldown = Math.ceil(total);
+          this.otpCooldownUntil = Date.now() + (this.otpCooldown * 1000);
+
+          if (this.otpCooldown <= 0) {
+            this.otpCooldown = 0;
+            return;
+          }
+
+          this.otpTimer = setInterval(() => {
+            const left = Math.max(0, Math.ceil((this.otpCooldownUntil - Date.now()) / 1000));
+            this.otpCooldown = left;
+            if (left <= 0) {
+              clearInterval(this.otpTimer);
+              this.otpTimer = null;
+              this.otpCooldown = 0;
+            }
+            this.saveOtpState();
+          }, 250);
+        },
+
+        startOtpExpiry(seconds = 600) {
+          clearInterval(this.otpExpiryTimer);
+          const total = Math.max(0, Number(seconds || 0));
+          this.otpExpiry = Math.ceil(total);
+          this.otpExpired = false;
+          this.otpExpiryUntil = Date.now() + (this.otpExpiry * 1000);
+          // Simpan absolute expiry supaya refresh bisa menghitung sisa waktu.
+          this.otpExpiresAt = this.otpExpiryUntil;
+
+          if (this.otpExpiry <= 0) {
+            this.otpExpiry = 0;
+            return;
+          }
+
+          this.otpExpiryTimer = setInterval(() => {
+            const left = Math.max(0, Math.ceil((this.otpExpiryUntil - Date.now()) / 1000));
+            this.otpExpiry = left;
+            if (left <= 0) {
+              clearInterval(this.otpExpiryTimer);
+              this.otpExpiryTimer = null;
+              this.otpExpiry = 0;
+              this.otpExpired = false;
+              this.saveOtpState();
+
+              // Pertahankan tampilan "Kode Berlaku 00:00" selama 1 detik.
+              setTimeout(() => {
+                this.otpExpired = true;
+                this.otpSent = false;
+                this.otp = '';
+                this.otpExpiresAt = 0;
+                this.saveOtpState();
+                try { localStorage.removeItem('vorath_otp_state'); } catch (_) { }
+              }, 1000);
+            }
+          }, 250);
+        },
+
+        resetOtpTimers() {
+          clearInterval(this.otpTimer);
+          clearInterval(this.otpExpiryTimer);
+          this.otpTimer = null;
+          this.otpExpiryTimer = null;
+          this.otpCooldown = 0;
+          this.otpExpiry = 0;
+          this.otpExpired = false;
+          this.otpCooldownUntil = 0;
+          this.otpExpiryUntil = 0;
+          this.stopOtpVerifyAnimation();
+        },
+
+        startOtpSendAnimation() {
+          if (this.otpSendAnimTimer) return;
+          if (!/^\.+$/.test(this.otpSendDots || '')) this.otpSendDots = '.';
+          this.otpSendAnimTimer = setInterval(() => {
+            this.otpSendDots = this.otpSendDots === '...' ? '.' : this.otpSendDots + '.';
+          }, 350);
+        },
+
+        stopOtpSendAnimation() {
+          clearInterval(this.otpSendAnimTimer);
+          this.otpSendAnimTimer = null;
+          this.otpSendDots = '.';
+        },
+
+        startOtpVerifyAnimation() {
+          if (this.otpVerifyAnimTimer) return;
+          if (!/^\.+$/.test(this.otpVerifyDots || '')) this.otpVerifyDots = '.';
+          this.otpVerifyAnimTimer = setInterval(() => {
+            this.otpVerifyDots =
+              this.otpVerifyDots === '...' ? '.' : this.otpVerifyDots + '.';
+          }, 350);
+        },
+
+        stopOtpVerifyAnimation() {
+          clearInterval(this.otpVerifyAnimTimer);
+          this.otpVerifyAnimTimer = null;
+          this.otpVerifyDots = '.';
+        },
+
+        async requestOtp() {
+          const email = String(this.email || '').trim().toLowerCase();
+
+          if (!/^[A-Za-z0-9._%+-]+@gmail\.com$/i.test(email)) {
+            this.emailError = 'Masukkan email Gmail yang valid, contoh nama@gmail.com.';
+            return;
+          }
+
+          if (!VORATH_CONFIG.GOOGLE_SCRIPT_URL || VORATH_CONFIG.GOOGLE_SCRIPT_URL.includes('PASTE_')) {
+            this.emailError = 'URL Google Apps Script belum diisi.';
+            return;
+          }
+
+          // Jika user memasukkan email yang sama setelah refresh,
+          // pulihkan progres OTP yang masih aktif sebelum membuat request baru.
+          if (!this.otpSent || this.otpEmail !== email) {
+            try {
+              const raw = localStorage.getItem('vorath_otp_state');
+              if (raw) {
+                const saved = JSON.parse(raw);
+                if (
+                  saved &&
+                  String(saved.email || '').trim().toLowerCase() === email &&
+                  Number(saved.otpExpiresAt || 0) > Date.now()
+                ) {
+                  this.restoreOtpStateForEmail(email, saved);
+                }
+              }
+            } catch (_) { }
+          }
+
+          // OTP yang masih aktif tidak dikirim ulang.
+          const now = Date.now();
+          if (
+            this.otpSent &&
+            this.otpEmail === email &&
+            Number(this.otpExpiresAt || 0) > now
+          ) {
+            this.otpCooldown = Math.max(
+              0,
+              Math.ceil((Number(this.otpRequestedAt || 0) + 90000 - now) / 1000)
+            );
+            this.otpError = '';
+            this.emailError = '';
+            this.startOtpCooldown();
+            this.startOtpExpiry(
+              Math.ceil((Number(this.otpExpiresAt) - now) / 1000)
+            );
+            this.saveOtpState();
+            return;
+          }
+
+          // Hanya kosongkan input saat benar-benar meminta OTP baru.
+          this.otp = '';
+          this.emailError = '';
+          this.otpError = '';
+          this.emailVerified = false;
+          this.verifiedToken = '';
+          this.otpVerifyRequestId = '';
+
+          this.otpBusy = true;
+          this.otpAction = 'send';
+          this.startOtpSendAnimation();
+
+          const markOtpAsSent = (result = {}) => {
+            this.otpSent = true;
+            this.emailVerified = false;
+            this.verifiedToken = '';
+            this.otp = '';
+            this.otpEmail = email;
+            this.otpRequestedAt = Date.now();
+            this.otpVerifyRequestId =
+              'verify_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+
+            const cooldown = Number(
+              result.cooldownSeconds || result.cooldownSec || 90
+            );
+            const ttl = Number(
+              result.expiresInSeconds ||
+              result.expiresInSec ||
+              result.otpTtlSeconds ||
+              600
+            );
+
+            this.startOtpCooldown(cooldown);
+            this.startOtpExpiry(ttl);
+            this.saveOtpState();
+            this.otpError = '';
+            this.emailError = '';
+          };
+
+          try {
+            let result;
+
+            try {
+              result = await this.api('registerRequestOtp', { email });
+            } catch (firstErr) {
+              const transient =
+                firstErr &&
+                (firstErr.message === 'JSONP_LOAD_ERROR' ||
+                  firstErr.message === 'JSONP_TIMEOUT');
+
+              if (!transient) throw firstErr;
+
+              await new Promise(resolve => setTimeout(resolve, 2000));
+
+              // Jangan kirim ulang sebelum memastikan OTP pertama belum dibuat.
+              try {
+                const status = await this.api('registerOtpStatus', { email });
+
+                if (
+                  status &&
+                  status.success &&
+                  (status.hasOtp || Number(status.cooldownSeconds || 0) > 0)
+                ) {
+                  markOtpAsSent({
+                    cooldownSeconds: Number(status.cooldownSeconds || 90),
+                    otpTtlSeconds: Number(
+                      status.otpTtlSeconds || status.expiresInSeconds || 600
+                    )
+                  });
+                  return;
+                }
+              } catch (_) { }
+
+              result = await this.api('registerRequestOtp', { email });
+            }
+
+            if (!result || !result.success) {
+              const message = String((result && result.message) || '');
+              const cooldown = Number(
+                (result && (result.cooldownSeconds || result.cooldownSec)) || 0
+              );
+
+              if (/tunggu|sedang diproses/i.test(message) || cooldown > 0) {
+                markOtpAsSent({
+                  cooldownSeconds: cooldown || 90,
+                  otpTtlSeconds: Number(
+                    (result && (
+                      result.expiresInSeconds ||
+                      result.expiresInSec ||
+                      result.otpTtlSeconds
+                    )) || 600
+                  )
+                });
+                return;
+              }
+
+              if (result && result.authRequired) {
+                if (result.authorizationUrl) {
+                  this.emailError =
+                    result.message + ' Buka link izin: ' + result.authorizationUrl;
+                } else {
+                  await this.showMailAuthorizationHint();
+                }
+              }
+
+              throw new Error(message || 'Gagal mengirim kode OTP.');
+            }
+
+            markOtpAsSent(result);
+          } catch (err) {
+            const message = String(err?.message || '');
+
+            if (message === 'JSONP_LOAD_ERROR' || message === 'JSONP_TIMEOUT') {
+              this.otpError =
+                'Server sedang lambat merespons. Pengiriman OTP sedang dicek. ' +
+                'Jangan tekan Kirim Kode berulang kali.';
+            } else {
+              this.otpError = message || 'Gagal mengirim kode OTP.';
+            }
+          } finally {
+            this.stopOtpSendAnimation();
+            this.otpBusy = false;
+            this.otpAction = '';
+          }
+        },
+
+        async verifyOtp() {
+          const email = String(this.email || '').trim().toLowerCase();
+          const code = String(this.otp || '').replace(/\D/g, '');
+
+          if (code.length !== 8) return;
+          if (!this.otpVerifyRequestId) {
+            this.otpVerifyRequestId = 'verify_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+          }
+
+          const requestId = this.otpVerifyRequestId;
+          this.otpBusy = true;
+          this.otpAction = 'verify';
+          this.startOtpVerifyAnimation();
+          this.emailError = '';
+          this.otpError = '';
+
+          try {
+            const result = await this.api('registerVerifyOtp', { email, code, requestId });
+            if (!result.success) throw new Error(result.message || 'Kode OTP salah atau kedaluwarsa.');
+            this.emailVerified = true;
+            this.otpError = '';
+            this.verifiedToken = result.verifiedToken || '';
+            this.otpVerifyRequestId = '';
+            this.resetOtpTimers();
+            // OTP sudah dipakai. Refresh setelah ini harus memulai ulang
+            // form seperti biasa, tanpa menghidupkan kembali OTP yang sudah digunakan.
+            try { localStorage.removeItem('vorath_otp_state'); } catch (_) { }
+          } catch (err) {
+            this.emailVerified = false;
+            this.verifiedToken = '';
+            this.otpError = err.message || 'Verifikasi email gagal. Coba lagi.';
+          } finally {
+            this.stopOtpVerifyAnimation();
+            this.otpBusy = false;
+            this.otpAction = '';
+          }
+        },
+        chooseAvatar(event) {
+          const file = event.target.files && event.target.files[0];
+          if (!file) return;
+
+          if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) {
+            this.uploadOk = false;
+            this.uploadCompleted = false;
+            this.uploadMessage = 'Format foto tidak didukung.';
+            return;
+          }
+          if (file.size > VORATH_CONFIG.MAX_AVATAR_MB * 1024 * 1024) {
+            this.uploadOk = false;
+            this.uploadMessage = 'Ukuran foto maksimal 5 MB.';
+            return;
+          }
+
+          this.avatarFile = file;
+          if (this.avatarPreview) URL.revokeObjectURL(this.avatarPreview);
+          this.avatarPreview = URL.createObjectURL(file);
+          this.uploadMessage = '';
+        },
+
+        startProgress() {
+          clearInterval(this.progressTimer);
+          this.uploadProgress = 0;
+
+          // Progress visual berjalan sendiri dari 0% dan tidak langsung
+          // meloncat mengikuti kecepatan server. Selama proses server masih
+          // berjalan, progress ditahan maksimal di 90%.
+          this.progressTimer = setInterval(() => {
+            if (!this.uploadBusy || this.registrationFinalized) return;
+
+            if (this.uploadProgress < 90) {
+              const step = this.uploadProgress < 40 ? 2 : (this.uploadProgress < 70 ? 1 : 0.5);
+              this.uploadProgress = Math.min(90, +(this.uploadProgress + step).toFixed(1));
+            }
+          }, 120);
+        },
+
+        async finishProgress() {
+          clearInterval(this.progressTimer);
+
+          // Walaupun server sudah selesai lebih cepat, progress tetap
+          // menyelesaikan animasinya sampai 100% terlebih dahulu.
+          const start = Math.max(0, this.uploadProgress);
+          const duration = 1800;
+          const startedAt = performance.now();
+
+          await new Promise(resolve => {
+            const tick = (now) => {
+              const elapsed = now - startedAt;
+              const ratio = Math.min(1, elapsed / duration);
+              const eased = 1 - Math.pow(1 - ratio, 3);
+              this.uploadProgress = +(start + (100 - start) * eased).toFixed(1);
+
+              if (ratio < 1) {
+                requestAnimationFrame(tick);
+              } else {
+                this.uploadProgress = 100;
+                resolve();
+              }
+            };
+            requestAnimationFrame(tick);
+          });
+        },
+
+        async uploadAvatar() {
+          if (!this.avatarFile) {
+            this.uploadOk = false;
+            this.uploadMessage = 'Pilih foto terlebih dahulu.';
+            return;
+          }
+
+          if (!VORATH_CONFIG.IMGBB_API_KEY || VORATH_CONFIG.IMGBB_API_KEY.includes('PASTE_')) {
+            this.uploadOk = false;
+            this.uploadMessage = 'API key ImgBB belum diisi.';
+            return;
+          }
+
+          if (!this.verifiedToken) {
+            this.uploadOk = false;
+            this.uploadMessage = 'Sesi verifikasi email tidak ditemukan. Silakan ulangi verifikasi.';
+            return;
+          }
+
+          if (!VORATH_CONFIG.GOOGLE_SCRIPT_URL || VORATH_CONFIG.GOOGLE_SCRIPT_URL.includes('PASTE_')) {
+            this.uploadOk = false;
+            this.uploadMessage = 'URL Google Apps Script belum diisi.';
+            return;
+          }
+
+          this.uploadBusy = true;
+          this.uploadMessage = '';
+          this.startProgress();
+
+          try {
+            const fd = new FormData();
+            fd.append('key', VORATH_CONFIG.IMGBB_API_KEY);
+            fd.append('image', this.avatarFile);
+
+            const imgResponse = await fetch('https://api.imgbb.com/1/upload', {
+              method: 'POST',
+              body: fd
+            });
+            const imgResult = await imgResponse.json();
+
+            if (!imgResult.success || !imgResult.data || !imgResult.data.url) {
+              throw new Error('Upload ImgBB gagal.');
+            }
+
+            // Setelah ImgBB berhasil, langsung simpan URL Avatar + data akun ke Sheet.
+            const avatarUrl = imgResult.data.url;
+            this.pendingAvatarUrl = avatarUrl;
+            this.avatarPreview = avatarUrl;
+            this.avatarReady = true;
+            this.avatarIsDefault = false;
+            localStorage.setItem('vorath_avatar', avatarUrl);
+
+            await this.finalizeRegistration();
+
+          } catch (err) {
+            this.uploadOk = false;
+            this.uploadMessage = err.message || 'Upload foto gagal.';
+          } finally {
+            clearInterval(this.progressTimer);
+            this.uploadBusy = false;
+          }
+        },
+
+        async skipAvatar() {
+          if (this.uploadBusy || this.submitBusy) return;
+
+          if (!this.verifiedToken) {
+            this.uploadOk = false;
+            this.uploadMessage = 'Sesi verifikasi email tidak ditemukan. Silakan ulangi verifikasi.';
+            return;
+          }
+
+          if (!VORATH_CONFIG.GOOGLE_SCRIPT_URL || VORATH_CONFIG.GOOGLE_SCRIPT_URL.includes('PASTE_')) {
+            this.uploadOk = false;
+            this.uploadMessage = 'URL Google Apps Script belum diisi.';
+            return;
+          }
+
+          // Lewati upload manual -> langsung gunakan foto default dan simpan ke Sheet.
+          this.uploadBusy = true;
+          this.startProgress();
+          this.pendingAvatarUrl = VORATH_CONFIG.DEFAULT_AVATAR_URL;
+          this.avatarPreview = '';
+          this.avatarFile = null;
+          this.avatarReady = true;
+          this.avatarIsDefault = true;
+          this.uploadOk = true;
+          this.uploadMessage = 'Lewati diproses. Menggunakan foto default dan menyimpan link Avatar...';
+          localStorage.setItem('vorath_avatar', VORATH_CONFIG.DEFAULT_AVATAR_URL);
+
+          try {
+            await this.finalizeRegistration();
+          } finally {
+            this.uploadBusy = false;
+          }
+        },
+
+        async finalizeRegistration() {
+          if (!this.pendingAvatarUrl) {
+            this.uploadOk = false;
+            this.uploadMessage = 'Link Avatar belum siap.';
+            return;
+          }
+
+          if (!this.verifiedToken) {
+            this.uploadOk = false;
+            this.uploadMessage = 'Sesi verifikasi email tidak ditemukan. Silakan ulangi verifikasi.';
+            return;
+          }
+
+          if (!VORATH_CONFIG.GOOGLE_SCRIPT_URL || VORATH_CONFIG.GOOGLE_SCRIPT_URL.includes('PASTE_')) {
+            this.uploadOk = false;
+            this.uploadMessage = 'URL Google Apps Script belum diisi.';
+            return;
+          }
+
+          this.submitBusy = true;
+          this.uploadMessage = '';
+
+          try {
+            const result = await this.api('registerAccount', {
+              email: String(this.email || '').trim().toLowerCase(),
+              fullName: this.fullName.trim(),
+              tiktokUsername: this.tiktokUsername.trim().replace(/^@/, ''),
+              whatsapp: this.whatsapp.trim(),
+              password: this.password,
+              verifiedToken: this.verifiedToken,
+              avatarUrl: this.pendingAvatarUrl
+            });
+
+            if (!result.success) throw new Error(result.message || 'Registrasi gagal.');
+
+            this.nfId = result.nfId;
+            this.rowNumber = result.rowNumber;
+            if (this.avatarIsDefault) this.avatarPreview = '';
+            await this.finishProgress();
+            this.registrationFinalized = true;
+            this.uploadCompleted = true;
+            this.uploadOk = true;
+            this.uploadMessage = this.avatarIsDefault
+              ? 'Pendaftaran berhasil. Foto default sudah masuk ke kolom Avatar.'
+              : 'Pendaftaran berhasil. Link foto sudah masuk ke kolom Avatar.';
+
+            this.accountInfo = {
+              nfId: this.nfId,
+              name: this.fullName,
+              username: this.tiktokUsername,
+              email: this.email
+            };
+
+            localStorage.setItem('vorath_auth', JSON.stringify({
+              nfId: this.nfId,
+              rowNumber: this.rowNumber,
+              email: this.email,
+              fullName: this.fullName,
+              tiktokUsername: this.tiktokUsername,
+              whatsapp: this.whatsapp
+            }));
+            localStorage.setItem('vorath_avatar', this.pendingAvatarUrl);
+            localStorage.setItem('vorath_registration_complete', '1');
+
+          } catch (err) {
+            this.uploadOk = false;
+            this.uploadMessage = err.message || 'Gagal menyimpan akun.';
+          } finally {
+            this.submitBusy = false;
+          }
+        },
+
+        resetForm() {
+          this.isSubmitted = false;
+          this.fullName = '';
+          this.tiktokUsername = '';
+          this.password = '';
+          this.showPassword = false;
+          this.passwordChecking = false;
+          this.passwordCheckDots = '.';
+          clearInterval(this.passwordCheckTimer);
+          clearTimeout(this.passwordCheckTimeout);
+          this.tiktokStatus = 'idle';
+          this.usernameCheckSeq++;
+          clearTimeout(this.checkTimer);
+          this.whatsapp = '';
+          this.whatsappStatus = 'idle';
+          this.whatsappCheckSeq++;
+          this.stopWhatsappCheckAnimation();
+          clearTimeout(this.whatsappCheckTimer);
+
+          // TAMBAHAN: reset data registrasi/upload
+          this.email = '';
+          this.emailError = '';
+          this.otpError = '';
+          this.otp = '';
+          this.otpSent = false;
+          this.otpAction = '';
+          this.stopOtpSendAnimation();
+          this.otpVerifyRequestId = '';
+          this.emailVerified = false;
+          this.verifiedToken = '';
+          this.resetOtpTimers();
+          this.nfId = '';
+          this.rowNumber = null;
+          this.uploadMode = false;
+          this.avatarFile = null;
+          this.avatarPreview = '';
+          this.uploadMessage = '';
+          this.uploadProgress = 0;
+          clearInterval(this.progressTimer);
+          this.progressTimer = null;
+          this.uploadCompleted = false;
+          this.accountInfo = null;
+          this.pendingAvatarUrl = '';
+          this.avatarReady = false;
+          this.avatarIsDefault = false;
+          this.registrationFinalized = false;
+          localStorage.removeItem('vorath_auth');
+          localStorage.removeItem('vorath_registration_complete');
+          localStorage.removeItem('vorath_avatar');
+          if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+        }
+      }
+    }
+  </script>
+  <script>
+        /* =========================
+           NEWBIEFAMS PROTECTION
+           MOBILE SAFE VERSION
+        ========================= */
+
+        (() => {
+
+            /* =========================
+               DISABLE RIGHT CLICK
+            ========================= */
+            document.addEventListener("contextmenu", (e) => {
+                e.preventDefault();
+            });
+
+            /* =========================
+               DISABLE IMAGE DRAG
+            ========================= */
+            document.addEventListener("dragstart", (e) => {
+
+                if (e.target.tagName === "IMG") {
+                    e.preventDefault();
+                }
+
+            });
+
+            /* =========================
+               IMAGE PROTECTION
+            ========================= */
+            document.querySelectorAll("img").forEach(img => {
+
+                // Anti drag
+                img.setAttribute("draggable", "false");
+
+                // Anti select
+                img.style.userSelect = "none";
+                img.style.webkitUserSelect = "none";
+
+                // Anti long press save image
+                img.style.webkitTouchCallout = "none";
+
+            });
+
+            /* =========================
+               DISABLE SHORTCUT INSPECT
+            ========================= */
+            document.addEventListener("keydown", function (e) {
+
+                const key = e.key.toLowerCase();
+
+                // F12
+                if (e.key === "F12") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + I
+                if (e.ctrlKey && e.shiftKey && key === "i") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + J
+                if (e.ctrlKey && e.shiftKey && key === "j") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + C
+                if (e.ctrlKey && e.shiftKey && key === "c") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + U
+                if (e.ctrlKey && key === "u") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + S
+                if (e.ctrlKey && key === "s") {
+                    e.preventDefault();
+                    return false;
+                }
+
+            }, true);
+
+
+
+            /* =========================
+               ANTI IFRAME
+            ========================= */
+            if (window.top !== window.self) {
+                document.body.innerHTML = "";
+            }
+
+            /* =========================
+               PRINTSCREEN BLUR
+            ========================= */
+            document.addEventListener("keyup", (e) => {
+
+                if (e.key === "PrintScreen") {
+
+                    document.body.style.transition = ".3s";
+                    document.body.style.filter = "blur(20px)";
+
+                    setTimeout(() => {
+                        document.body.style.filter = "blur(0)";
+                    }, 2000);
+
+                }
+
+            });
+
+            /* =========================
+               AUTO CLEAR CONSOLE
+            ========================= */
+            setInterval(() => {
+                console.clear();
+            }, 2000);
+
+        })();
+    </script>
+</body>
+
+</html>
