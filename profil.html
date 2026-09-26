@@ -1680,7 +1680,7 @@ body {
 <body>
     <div class="video-background" id="videoBackgroundContainer">
     <video 
-            src="./vd/Gojo.mp4" 
+            src="https://www.image2url.com/r2/default/videos/1787414606753-a80336f5-08b1-4cbb-9351-dad84148f233.mp4" 
             autoplay 
             muted 
             loop 
@@ -1718,8 +1718,8 @@ body {
     <div id="topupModal"
         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
         <div class="menu-card" style="width: 300px; max-width: 90%; padding: 20px;">
-            <h3 style="margin-bottom: 4px;">Top Up NfCash</h3>
-            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Pilih nominal NfC di bawah ini. Kurs: 1 NfC = Rp500.</p>
+            <h3 style="margin-bottom: 4px;">Top Up NFC</h3>
+            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Pilih nominal NFC di bawah ini. Kurs: 1 NFC = Rp500.</p>
             <div id="topupList" style="display: flex; flex-direction: column; gap: 10px;"></div>
             <button onclick="closeTopupModal()"
                 style="width: 100%; margin-top: 16px; padding: 10px; border: none; border-radius: 8px; cursor: pointer; background: #222; color: #fff;">Batal</button>
@@ -1780,9 +1780,7 @@ body {
                         <div class="pslide">
                             <div style="position:relative; width:100%; border-radius:15px; background:#000; overflow:hidden;">
                                 <div id="profilBanner" style="position:relative; width:100%; aspect-ratio:16/9;">
-                                    <video src="./vd/Sachiro.mp4" autoplay muted loop playsinline
-                                        style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; pointer-events:none;">
-                                    </video>
+                                    <!-- isi banner dipasang oleh loadUserData() (video premium / gambar default) -->
                                 </div>
                                 <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4);"></div>
                                 <div style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; display:flex; flex-direction:column; justify-content:center; color:#fff;">
@@ -1837,7 +1835,7 @@ body {
                             <div class="rocket" style="background:#2a2145;">
                                 <i class="fa-solid fa-wallet" style="color:#a78bfa;"></i>
                             </div>
-                            <div class="level-title">NfCash Anda</div>
+                            <div class="level-title">NFC Anda</div>
                         </div>
                         <button onclick="openTopupModal()" class="level-badge"
                             style="border:none; cursor:pointer; background:#2a2145; color:#a78bfa;">
@@ -1845,8 +1843,8 @@ body {
                         </button>
                     </div>
 
-                    <div class="progress-title">NfCash</div>
-                    <div id="saldoAmount" style="font-size:26px; font-weight:800; color:#fff; margin-top:10px;">0 NfC</div>
+                    <div class="progress-title">Total</div>
+                    <div id="saldoAmount" style="font-size:26px; font-weight:800; color:#fff; margin-top:10px;">0 NFC</div>
                 </div>
 
             </div>
@@ -1862,7 +1860,7 @@ body {
                                 </div>
                                 <div class="price-container">
                                     <div id="price-display-alpha" class="price" data-original="26"
-                                        style="color: #fff;">26 NfC</div>
+                                        style="color: #fff;">26 NFC</div>
 
                                     <div id="price-result-container"
                                         style="display: none; margin-top: 10px; flex-direction: column; gap: 5px; background: none;">
@@ -1884,7 +1882,7 @@ body {
                                     <div class="feature"><i data-lucide="image"></i> Bisa ubah foto profil</div>
                                 </div>
 
-                                <button id="buyBtnAlpha" class="buy-btn" onclick="kirimPesanWA('membeli', 'NEFA ALPHA')">BELI NEFA ALPHA</button>
+                                <button id="buyBtnAlpha" class="buy-btn" onclick="belanjaPremium('membeli', 'NEFA ALPHA')">BELI NEFA ALPHA</button>
                             </div>
                         </div>
 
@@ -1896,7 +1894,7 @@ body {
                                 </div>
                                 <div class="price-container">
                                     <div id="price-display-priority" class="price" data-original="30"
-                                        style="color: #fff;">30 NfC</div>
+                                        style="color: #fff;">30 NFC</div>
 
                                     <div id="price-result-container-priority"
                                         style="display: none; margin-top: 10px; flex-direction: column; gap: 5px; background: none;">
@@ -1920,7 +1918,7 @@ body {
                                     </div>
                                 </div>
 
-                                <button id="buyBtnPriority" class="buy-btn" onclick="kirimPesanWA('membeli', 'NEFA PRIORITY')">
+                                <button id="buyBtnPriority" class="buy-btn" onclick="belanjaPremium('membeli', 'NEFA PRIORITY')">
                                     BELI NEFA PRIORITY
                                 </button>
                             </div>
@@ -1949,7 +1947,7 @@ body {
         <div class="menu-item">
             <div class="menu-left">
                 <i class="fa-solid fa-file-lines"></i>
-                <div class="menu-text">Feedback Pengguna</div>
+                <div class="menu-text">Report & Ask Pengguna</div>
             </div>
             
         </div>
@@ -2036,12 +2034,12 @@ body {
         };
 
         // 2. Fungsi Pembantu
-        // Kurs resmi NfCash: 1 NfC = Rp500 (dipakai saat Top Up).
+        // Kurs resmi NFC: 1 NFC = Rp500 (dipakai saat Top Up).
         const NFC_RATE = 500;
 
-        // SATU fungsi format NfCash yang dipakai di seluruh halaman (saldo, harga premium,
-        // pesan WhatsApp, dll) supaya tidak ada lagi celah selisih format di tempat berbeda.
-        // NfCash selalu berupa bilangan bulat (tidak ada pecahan NfC).
+        // SATU fungsi format NFC yang dipakai di seluruh halaman (saldo, harga
+        // premium, pesan WhatsApp, dll) supaya tidak ada lagi celah selisih format di
+        // tempat berbeda. NFC selalu berupa bilangan bulat (tidak ada pecahan).
         function formatNfc(angka) {
             // Logika khusus untuk Unlimited
             if (angka === "unlimited" || angka === "Unlimited") {
@@ -2049,21 +2047,21 @@ body {
             }
 
             const n = parseFloat(angka);
-            if (isNaN(n)) return "0 NfC";
+            if (isNaN(n)) return "0 NFC";
 
-            // Triliun / Miliar / Juta NfC (jaga-jaga untuk nominal sangat besar, mis. saldo admin)
+            // Triliun / Miliar / Juta NFC (jaga-jaga untuk nominal sangat besar, mis. saldo admin)
             if (n >= 1000000000000) {
-                return (n / 1000000000000).toFixed(2).replace('.', ',') + " Triliun NfC";
+                return (n / 1000000000000).toFixed(2).replace('.', ',') + " Triliun NFC";
             }
             if (n >= 1000000000) {
-                return (n / 1000000000).toFixed(2).replace('.', ',') + " Miliar NfC";
+                return (n / 1000000000).toFixed(2).replace('.', ',') + " Miliar NFC";
             }
             if (n >= 1000000) {
-                return (n / 1000000).toFixed(2).replace('.', ',') + " Juta NfC";
+                return (n / 1000000).toFixed(2).replace('.', ',') + " Juta NFC";
             }
 
-            // Default: bilangan bulat NfC dengan pemisah ribuan gaya Indonesia
-            return Math.round(n).toLocaleString('id-ID') + " NfC";
+            // Default: bilangan bulat NFC dengan pemisah ribuan gaya Indonesia
+            return Math.round(n).toLocaleString('id-ID') + " NFC";
         }
 
         // Format nominal Rupiah asli (dipakai HANYA untuk uang tunai sungguhan saat Top Up,
@@ -2132,6 +2130,57 @@ body {
             });
         }
 
+        // BARU: cek satu kode ke server (read-only, tidak mengosongkan/mengubah
+        // apapun di Sheet) -- balikin true kalau kode itu MASIH ada/valid di
+        // tab Prizepool, false kalau sudah tidak ada (sudah dipakai/kadaluarsa).
+        // Kalau gagal terhubung ke server, balikin null (artinya "tidak tahu",
+        // supaya kode TIDAK dihapus cuma gara-gara sedang offline).
+        async function cekKodeMasihValid(kode) {
+            if (!SHEET_WRITE_URL || !kode) return null;
+            try {
+                const url = SHEET_WRITE_URL + '?action=checkCode&code=' + encodeURIComponent(kode) + '&t=' + Date.now();
+                const result = await jsonpRequest(url, {}, 8000);
+                if (result && result.success) return !!result.valid;
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // BARU: bersihkan OTOMATIS semua kode di localStorage "Kode Hadiah Saya"
+        // yang ternyata sudah tidak ada lagi di Sheet (sudah dipakai orang lain/
+        // kadaluarsa/sudah diganti auto-refill) -- supaya tidak ada kode
+        // "nyangkut" yang kelihatan masih ada padahal tidak mungkin berhasil
+        // diklaim. Dipanggil diam-diam (tanpa toast) tiap kali modal Tukar Kode
+        // dibuka. Kode yang statusnya tidak bisa dipastikan (mis. lagi offline)
+        // TIDAK ikut dihapus, biar aman.
+        async function bersihkanSemuaKodeKadaluarsa() {
+            try {
+                const key = getKodeSayaKeyLokal();
+                const raw = localStorage.getItem(key);
+                if (!raw) return;
+                const list = JSON.parse(raw);
+                if (!Array.isArray(list) || list.length === 0) return;
+
+                const sisa = [];
+                for (const item of list) {
+                    const kode = String((item && item.code) || '').trim();
+                    if (!kode) continue;
+                    const masihValid = await cekKodeMasihValid(kode);
+                    if (masihValid === false) {
+                        continue; // sudah tidak ada di Sheet -> otomatis dihapus (tidak dimasukkan ke `sisa`)
+                    }
+                    sisa.push(item); // masih valid ATAU statusnya tidak pasti -> tetap disimpan, aman
+                }
+
+                if (sisa.length !== list.length) {
+                    localStorage.setItem(key, JSON.stringify(sisa));
+                }
+            } catch (e) {
+                console.warn('[NEFA] Gagal membersihkan kode kadaluarsa:', e);
+            }
+        }
+
         // 5. Fungsi untuk tombol redeem
         // Modal Tukar Kode kini berdiri sendiri di luar Settings.
         function openRedeemModal() {
@@ -2141,6 +2190,12 @@ body {
             if (resultEl) resultEl.innerHTML = '';
             document.getElementById('redeemModal').style.display = 'flex';
             setScrollLock(true);
+
+            // Bersihkan diam-diam kode kadaluarsa tiap kali modal ini dibuka,
+            // supaya daftar kode user selalu bersih dari kode yang sudah pasti
+            // tidak bisa diklaim lagi (tidak perlu user coba redeem dulu satu-
+            // satu buat tahu kodenya masih hidup atau tidak).
+            bersihkanSemuaKodeKadaluarsa();
         }
 
         function closeRedeemModal() {
@@ -2148,40 +2203,187 @@ body {
             setScrollLock(false);
         }
 
-        function cekRedeem() {
+        // BARU: kunci & helper localStorage "Kode Hadiah Saya" -- HARUS pakai
+        // formula key yang SAMA PERSIS dengan yang dipakai di spin.html
+        // ('nefa_kode_hadiah_' + username), supaya kode yang disimpan di
+        // spin.html bisa ditemukan & dihapus dari sini begitu berhasil
+        // di-redeem (dicek/dibandingkan tanpa peduli besar-kecil huruf/spasi).
+        function getKodeSayaKeyLokal() {
+            const uname = (window.currentUser && window.currentUser.username) || localStorage.getItem('username') || 'guest';
+            return 'nefa_kode_hadiah_' + uname;
+        }
+
+        // Cari qty (jumlah gabungan) untuk sebuah kode di localStorage
+        // "Kode Hadiah Saya". Kalau kodenya tidak ketemu di sini (mis. dibuka
+        // dari perangkat lain, atau localStorage sudah kehapus), default qty=1
+        // -- aman, server tetap menerapkan minimal nilai satuannya.
+        function cariQtyKodeLokal(kode) {
+            try {
+                const key = getKodeSayaKeyLokal();
+                const raw = localStorage.getItem(key);
+                if (!raw) return 1;
+                const list = JSON.parse(raw);
+                if (!Array.isArray(list)) return 1;
+                const target = String(kode || '').trim().toUpperCase().replace(/\s+/g, '');
+                const found = list.find(item => {
+                    const itemCode = String((item && item.code) || '').trim().toUpperCase().replace(/\s+/g, '');
+                    return itemCode === target;
+                });
+                return (found && found.qty && found.qty > 0) ? found.qty : 1;
+            } catch (e) {
+                return 1;
+            }
+        }
+
+        function hapusKodeSayaLokal(kodeYangDiredeem) {
+            try {
+                const key = getKodeSayaKeyLokal();
+                const raw = localStorage.getItem(key);
+                if (!raw) return;
+                const list = JSON.parse(raw);
+                if (!Array.isArray(list)) return;
+
+                const target = String(kodeYangDiredeem || '').trim().toUpperCase().replace(/\s+/g, '');
+                const sisa = list.filter(item => {
+                    const itemCode = String((item && item.code) || '').trim().toUpperCase().replace(/\s+/g, '');
+                    return itemCode !== target;
+                });
+                localStorage.setItem(key, JSON.stringify(sisa));
+            } catch (e) {
+                console.warn('[NEFA] Gagal membersihkan kode dari localStorage lokal:', e);
+            }
+        }
+
+        // Tukar Kode sekarang menangani DUA jenis kode dalam satu input:
+        //   1. Kode DISKON lokal (daftarKode) -- potongan harga premium, dicek di
+        //      browser, satu kode bisa dipakai banyak orang (rame-rame) tapi tiap
+        //      device cuma bisa pakai sekali per kode (dicatat di localStorage).
+        //   2. Kode HADIAH dari tab "Prizepool" di Google Sheet -- dicek ke server
+        //      lewat Apps Script (action=redeemCode), sekali pakai untuk SIAPAPUN
+        //      (server yang mengunci, bukan cuma localStorage perangkat).
+        // Urutan cek: DISKON dulu (instan, tanpa perlu ke server), baru kalau
+        // tidak cocok dicoba ke server sebagai kode hadiah.
+        async function cekRedeem() {
             const inputEl = document.getElementById('redeemInput');
             const input = inputEl ? inputEl.value.trim().toUpperCase() : "";
+            const btnEl = document.querySelector('#redeemModal .buy-btn');
 
-            // 1. Cek apakah kode ada di daftar
-            if (!input || !daftarKode.hasOwnProperty(input)) {
-                showToast("Kode tidak valid!", "error");
+            if (!input) {
+                showToast("Masukkan kode dulu!", "error");
                 return;
             }
 
-            // 2. Cek apakah kode ini sudah pernah digunakan sebelumnya (di sisi user)
-            // Kita simpan daftar kode yang sudah pernah dipakai di localStorage
-            let kodeYangSudahDipakai = JSON.parse(localStorage.getItem('riwayat_kode_dipakai') || "[]");
+            // --- 1. CEK KODE DISKON LOKAL DULU ---
+            if (daftarKode.hasOwnProperty(input)) {
+                let kodeYangSudahDipakai = JSON.parse(localStorage.getItem('riwayat_kode_dipakai') || "[]");
 
-            if (kodeYangSudahDipakai.includes(input)) {
-                showToast("Kode ini sudah pernah digunakan sebelumnya!", "error");
+                if (kodeYangSudahDipakai.includes(input)) {
+                    showToast("Kode ini sudah pernah kamu gunakan sebelumnya!", "error");
+                    return;
+                }
+
+                kodeYangSudahDipakai.push(input);
+                localStorage.setItem('riwayat_kode_dipakai', JSON.stringify(kodeYangSudahDipakai));
+
+                // Diskon berlaku 24 jam sejak dipakai (dicek ulang tiap halaman dimuat, lihat cekStatusDiskon()).
+                const expiry = new Date().getTime() + (24 * 60 * 60 * 1000);
+                localStorage.setItem('kode_aktif', input);
+                localStorage.setItem('expiry_kode', expiry);
+
+                terapkanDiskon(input);
+                showToast("Kode diskon " + input + " berhasil digunakan!", "success");
+                setTimeout(closeRedeemModal, 1000);
                 return;
             }
 
-            // 3. Jika belum, proses diskon
-            // Tambahkan kode ke riwayat agar tidak bisa dipakai lagi
-            kodeYangSudahDipakai.push(input);
-            localStorage.setItem('riwayat_kode_dipakai', JSON.stringify(kodeYangSudahDipakai));
+            // --- 2. BUKAN KODE DISKON -> COBA SEBAGAI KODE HADIAH DI SHEET ---
+            const uname = (window.currentUser && window.currentUser.username) || localStorage.getItem('username');
+            if (!uname) {
+                showToast("Kamu harus login dulu untuk klaim kode!", "error");
+                return;
+            }
 
-            // Lanjutkan logika diskon seperti biasa
-            const expiry = new Date().getTime() + (24 * 60 * 60 * 1000); // Masa berlaku 24 jam
-            localStorage.setItem('kode_aktif', input); // Menyimpan kode yang sedang aktif saat ini
-            localStorage.setItem('expiry_kode', expiry);
+            if (SHEET_WRITE_URL.indexOf('GANTI_DENGAN_URL_WEB_APP') !== -1) {
+                showToast("URL Apps Script belum diisi (SHEET_WRITE_URL).", "error");
+                return;
+            }
 
-            terapkanDiskon(input);
-            showToast("Kode " + input + " berhasil digunakan!", "success");
+            // Kunci tombol sementara supaya tidak diklik berkali-kali selagi menunggu
+            // balasan server (dan mencegah 1 kode diklaim ganda dari perangkat yang sama).
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.dataset.originalText = btnEl.textContent;
+                btnEl.textContent = "Memproses...";
+            }
 
-            // Tutup modal Tukar Kode setelah berhasil
-            setTimeout(closeRedeemModal, 1000);
+            // Kalau hadiah yang sama sempat menang berkali-kali & digabung sisi
+            // spin.html (mis. 2x menang "NfCash 2"), qty gabungannya dibaca di
+            // sini lalu dikirim ke server supaya nilainya dikalikan otomatis.
+            const qtyGabungan = cariQtyKodeLokal(input);
+
+            try {
+                // Pakai endpoint SAFE supaya kode yang sudah tidak ada ditolak
+                // SEBELUM server membuka Spreadsheet. requestId dibuat unik untuk
+                // request ini, tetapi retry otomatis (jika diperlukan) wajib memakai
+                // requestId yang sama agar hasil tidak diproses dua kali.
+                const redeemRequestId = 'redeem_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+                const result = await jsonpRequest(SHEET_WRITE_URL, {
+                    action: 'redeemCodeSafe',
+                    requestId: redeemRequestId,
+                    code: input,
+                    username: uname,
+                    key: SHEET_WRITE_KEY,
+                    qty: qtyGabungan
+                }, 10000);
+
+                if (result && result.success) {
+                    showToast(result.message || ("Kode " + input + " berhasil digunakan!"), "success");
+                    setTimeout(closeRedeemModal, 1000);
+
+                    // BARU: kode ini sudah resmi terpakai di server (kolom Code di
+                    // Prizepool sudah dikosongkan & langsung diisi ulang otomatis
+                    // oleh Apps Script) -- jadi hapus juga dari daftar "Kode Hadiah
+                    // Saya" di localStorage supaya tidak ada kode nyangkut yang
+                    // kelihatan masih bisa dipakai padahal sudah dipakai.
+                    hapusKodeSayaLokal(input);
+
+                    // Apps Script sudah langsung mengubah PremiumType/ExpiredDate/Balance
+                    // di Sheet, jadi muat ulang data akun supaya tampilan langsung update.
+                    if (typeof loadUserData === 'function') loadUserData();
+                } else {
+                    // Kalau request sebelumnya masih benar-benar diproses, jangan
+                    // menghapus kode lokal. Tampilkan status yang jelas.
+                    if (result && result.safePending) {
+                        showToast('Server masih memproses klaim sebelumnya. Tunggu sebentar lalu coba lagi.', 'info');
+                        return;
+                    }
+
+                    // Kalau server bilang kodenya TIDAK DITEMUKAN / sudah
+                    // dipakai, itu tandanya kode ini memang sudah tidak mungkin
+                    // berhasil diklaim (mis. sudah kepakai sebelumnya, atau versi
+                    // lokal yang tersimpan sudah kadaluarsa). Daripada terus
+                    // nyangkut di daftar & bikin user coba-coba lagi, langsung
+                    // hapus dari localStorage + kasih pesan netral (bukan merah
+                    // "error" yang terkesan ada yang salah/rusak).
+                    const pesanGagal = (result && result.message) || '';
+                    const kodeTidakDitemukan = /tidak ditemukan|sudah dipakai/i.test(pesanGagal);
+
+                    if (kodeTidakDitemukan) {
+                        hapusKodeSayaLokal(input);
+                        showToast('Kode ini sudah tidak berlaku (sudah dipakai/kadaluarsa) dan otomatis dihapus dari daftar kamu.', 'info');
+                    } else {
+                        showToast(pesanGagal || "Kode tidak valid atau sudah dipakai!", "error");
+                    }
+                }
+            } catch (err) {
+                console.error('Gagal klaim kode:', err);
+                showToast("Gagal menghubungi server, coba lagi.", "error");
+            } finally {
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.textContent = btnEl.dataset.originalText || "Tukar Kode";
+                }
+            }
         }
 
         // 6. Pengecekan saat halaman dimuat
@@ -2459,7 +2661,106 @@ const TOPUP_PACKAGES = [
             showToast('Permintaan top up dikirim, tunggu konfirmasi admin.', 'success');
         }
 
-        // --- 2. LOGIKA DATA & WHATSAPP ---
+        // --- 2. BELI / PERPANJANG PREMIUM — LANGSUNG KE SHEET (TANPA WHATSAPP) ---
+        //
+        // Menggantikan alur lama yang cuma kirim pesan WA lalu admin proses manual.
+        // Sekarang klik "BELI"/"PERPANJANG" langsung memanggil Apps Script
+        // (action=buyPremium) yang memotong Balance & mengaktifkan PremiumType +
+        // ExpiredDate di Sheet dalam satu kali proses server (lihat Code.gs).
+        async function belanjaPremium(aksi, infoPaket) {
+            const isAlpha = infoPaket === 'NEFA ALPHA';
+            const btnEl = document.getElementById(isAlpha ? 'buyBtnAlpha' : 'buyBtnPriority');
+            const kataKerja = (aksi === 'memperpanjang') ? 'diperpanjang' : 'dibeli';
+
+            if (SHEET_WRITE_URL.indexOf('GANTI_DENGAN_URL_WEB_APP') !== -1) {
+                showToast('URL Apps Script belum diisi (SHEET_WRITE_URL).', 'error');
+                return;
+            }
+
+            const uname = (window.currentUser && window.currentUser.username) || localStorage.getItem('username');
+            if (!uname) {
+                showToast('Kamu harus login dulu untuk membeli premium!', 'error');
+                return;
+            }
+
+            // Harga final (ikut diskon kode lokal yang sedang aktif kalau ada,
+            // logikanya sama seperti sebelumnya) -> tetap divalidasi ULANG di
+            // server (lihat buyPremium_ di Code.gs), jadi tidak bisa diakali
+            // lewat DevTools/Console.
+            const tipe = isAlpha ? 'basic' : 'plus';
+            let hargaFinal;
+            if (isAlpha) {
+                const elNewPrice = document.getElementById('new-price-text');
+                hargaFinal = (elNewPrice && elNewPrice.parentElement.parentElement.style.display !== 'none')
+                    ? elNewPrice.textContent
+                    : '26 NFC';
+            } else {
+                const elNewPricePriority = document.getElementById('new-price-text-priority');
+                hargaFinal = (elNewPricePriority && elNewPricePriority.parentElement.parentElement.style.display !== 'none')
+                    ? elNewPricePriority.textContent
+                    : '30 NFC';
+            }
+
+            const hargaAngka = parseHarga(hargaFinal);
+            const saldoSekarang = getSaldo();
+            const isUnlimited = saldoSekarang === 'Unlimited';
+
+            if (!isUnlimited && saldoSekarang < hargaAngka) {
+                showToast('Saldo tidak cukup, silakan top up terlebih dahulu.', 'error');
+                return;
+            }
+
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.dataset.originalText = btnEl.innerHTML;
+                btnEl.textContent = 'Memproses...';
+            }
+
+            try {
+                const result = await jsonpRequest(SHEET_WRITE_URL, {
+                    action: 'buyPremium',
+                    username: uname,
+                    key: SHEET_WRITE_KEY,
+                    tipe: tipe,
+                    durasiHari: 30,
+                    harga: hargaAngka
+                });
+
+                if (result && result.success) {
+                    showToast(result.message || (infoPaket + ' berhasil ' + kataKerja + '!'), 'success');
+
+                    // Sinkronkan saldo lokal juga, biar tidak nunggu round-trip
+                    // fetch ulang lagi sebelum sempat terlihat.
+                    if (result.newBalance !== undefined) {
+                        localStorage.setItem(
+                            getSaldoKey(),
+                            result.newBalance === 'Unlimited' ? 'unlimited' : result.newBalance
+                        );
+                    }
+
+                    // Hapus promo lokal yang sedang aktif setelah dipakai (sama seperti alur lama)
+                    localStorage.removeItem('kode_aktif');
+                    localStorage.removeItem('expiry_kode');
+
+                    // Muat ulang data akun dari Sheet supaya status premium/saldo
+                    // terbaru langsung tampil tanpa perlu refresh manual.
+                    if (typeof loadUserData === 'function') await loadUserData();
+                    renderSaldo();
+                } else {
+                    showToast((result && result.message) || 'Gagal memproses pembelian.', 'error');
+                }
+            } catch (err) {
+                console.error('Gagal beli premium:', err);
+                showToast('Gagal menghubungi server, coba lagi.', 'error');
+            } finally {
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.innerHTML = btnEl.dataset.originalText || infoPaket;
+                }
+            }
+        }
+
+        // --- 3. LOGIKA DATA & WHATSAPP (dipakai untuk permintaan lain, BUKAN pembelian premium) ---
 
         function kirimPesanWA(aksi, infoPaket, dataBaru = null) {
     const username = document.getElementById('username').textContent;
@@ -2467,71 +2768,14 @@ const TOPUP_PACKAGES = [
     const nfid = nfidText.replace('NF-ID: ', '');
     const nomorWA = "6281399095266";
 
-    let teksPesan = "";
+    // CATATAN: pembelian/perpanjangan NEFA ALPHA & PRIORITY TIDAK lagi lewat
+    // WhatsApp -- sudah dipindah ke belanjaPremium() (langsung potong saldo &
+    // aktifkan premium di Sheet lewat Apps Script). Fungsi ini sekarang cuma
+    // dipakai untuk permintaan lain ke admin (mis. ubah data profil).
+    const infoTambahan = dataBaru ? `%0A%0AData Baru:%0A${dataBaru}` : '';
+    const teksPesan = `Halo Admin, Saya ingin ${aksi} ${infoPaket}.%0A%0ADetail Akun:%0AUsername: ${username}%0ANF-ID: ${nfid}${infoTambahan}%0A%0ATerimakasih`;
 
-    if (aksi === 'membeli' || aksi === 'memperpanjang') {
-        // Kata kerja pada pesan WA mengikuti aksi (beli vs perpanjang), tapi logika
-        // harga & potongan NfCash-nya identik.
-        const kataKerja = (aksi === 'memperpanjang') ? 'memperpanjang' : 'membeli';
-
-        // Cek harga diskon yang sedang aktif
-        let hargaFinal = "";
-
-        if (infoPaket === 'NEFA ALPHA') {
-            const elNewPrice = document.getElementById('new-price-text');
-            hargaFinal = (elNewPrice && elNewPrice.parentElement.parentElement.style.display !== 'none')
-                ? elNewPrice.textContent
-                : '26 NfC';
-        } else {
-            const elNewPricePriority = document.getElementById('new-price-text-priority');
-            hargaFinal = (elNewPricePriority && elNewPricePriority.parentElement.parentElement.style.display !== 'none')
-                ? elNewPricePriority.textContent
-                : '30 NfC';
-        }
-
-        // --- CEK & POTONG SALDO OTOMATIS ---
-        const hargaAngka = parseHarga(hargaFinal);
-        const saldoSekarang = getSaldo();
-        
-        // Logika tambahan untuk status Unlimited
-        const isUnlimited = saldoSekarang === "Unlimited";
-
-        if (!isUnlimited && saldoSekarang < hargaAngka) {
-            showToast('Saldo tidak cukup, silakan top up terlebih dahulu.', 'error');
-            return;
-        }
-
-        // Hanya memotong saldo jika bukan Unlimited
-        if (!isUnlimited) {
-            setSaldo(saldoSekarang - hargaAngka);
-        }
-
-        // Menentukan teks sisa saldo untuk pesan WA
-        const sisaSaldoTeks = isUnlimited ? "Unlimited" : formatNfc(getSaldo());
-        const potonganTeks = isUnlimited ? "Gratis (Unlimited)" : formatNfc(hargaAngka);
-
-        teksPesan = `Halo Admin, Saya ingin ${kataKerja}:%0A${infoPaket}%0A${hargaFinal}%0AMasa Aktif 30 Hari%0A%0ANfCash Terpotong: ${potonganTeks}%0ASisa NfCash: ${sisaSaldoTeks}%0A%0ADetail Akun:%0AUsername: ${username}%0ANF-ID: ${nfid}%0A%0ATerimakasih`;
-
-        // --- TAMBAHAN: Hapus promo setelah dibeli ---
-        localStorage.removeItem('kode_aktif');
-        localStorage.removeItem('expiry_kode');
-
-        // Membuka WhatsApp
-        window.open(`https://wa.me/${nomorWA}?text=${teksPesan}`);
-
-        // Reload halaman setelah 1 detik agar tampilan harga kembali normal
-        setTimeout(() => {
-            location.reload();
-        }, 1000);
-
-        return; 
-    }
-    else {
-        const infoTambahan = dataBaru ? `%0A%0AData Baru:%0A${dataBaru}` : '';
-        teksPesan = `Halo Admin, Saya ingin ${aksi} ${infoPaket}.%0A%0ADetail Akun:%0AUsername: ${username}%0ANF-ID: ${nfid}${infoTambahan}%0A%0ATerimakasih`;
-
-        window.open(`https://wa.me/${nomorWA}?text=${teksPesan}`);
-    }
+    window.open(`https://wa.me/${nomorWA}?text=${teksPesan}`);
 }
         // Fungsi pembantu untuk mengatur scroll body
 function setScrollLock(isLocked) {
@@ -2625,44 +2869,78 @@ window._sisaWaktuInterval = window._sisaWaktuInterval || null;
 // satu Sheet jadi sumber data tunggal untuk seluruh halaman.
 // =========================
 const SHEET_ID = "1I9G2pN7x3_qe5jOiNUbvINP0pRiAnHYuwYBQJdSDT0A";
-// PENTING: sebelumnya pakai endpoint gviz (tqx=out:json). Endpoint itu punya
-// heuristik internal Google untuk menebak baris header & tipe data tiap kolom,
-// dan tebakan itu bisa berubah kalau isi kolom lain (mis. StreakDays) berubah
-// dari angka ke teks ("Max") atau sebaliknya -- yang bikin semua nama kolom
-// (Username, Password, dst) gagal terbaca dan user aktif ke-logout paksa.
-// Endpoint CSV export di bawah tidak punya heuristik semacam itu sama sekali.
-const SHEET_MEMBERS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
-// Parser CSV sederhana (RFC4180-ish): menangani field yang dibungkus tanda kutip
-// (bisa berisi koma/baris baru di dalamnya, seperti pada beberapa URL Avatar).
-function parseCSV(text) {
-    const rows = [];
-    let row = [];
-    let field = '';
-    let inQuotes = false;
+// =========================
+// APPS SCRIPT (WEB APP) — endpoint TULIS ke Sheet, dipakai untuk Tukar Kode
+// (action=redeemCodeSafe/redeemCode, baca dari kode yang sudah di-reserve) dan potong saldo NfCash
+// (action=deductBalance) di halaman lain seperti spin.html.
+//
+// PENTING: ganti SHEET_WRITE_URL di bawah dengan URL Web App hasil Deploy
+// Apps Script kamu (yang isinya doGet + redeemCode_ + deductBalance, lihat
+// Code.gs). SHEET_WRITE_KEY harus PERSIS SAMA dengan SHARED_KEY di Code.gs.
+// =========================
+const SHEET_WRITE_URL = "https://script.google.com/macros/s/AKfycbwr-ZDC60mEXL8wwBTz59MJXwIa8rTDuLDQefnHMRHyq6wZSMvaDvBdiFd_1rcYqazh/exec";
+const SHEET_WRITE_KEY = "Farriz5467RifaldiZe";
 
-    for (let i = 0; i < text.length; i++) {
-        const char = text[i];
+// Kirim request ke Apps Script lewat teknik JSONP (bukan fetch() biasa),
+// karena ContentService Apps Script tidak bisa mengirim header CORS, jadi
+// fetch() dari browser akan selalu diblokir walau request-nya sendiri
+// sukses dieksekusi di server. Dengan tag <script src="...&callback=...">,
+// aturan CORS itu tidak berlaku, dan Code.gs sudah mendukung parameter
+// "callback" ini di semua action (lihat fungsi respond() di Code.gs).
+//
+// FIX: versi sebelumnya SAMA SEKALI TIDAK PUNYA TIMEOUT -- kalau Apps
+// Script lambat merespons (atau tidak merespons sama sekali karena
+// kebebanan), permintaan ini nyangkut selamanya (tombol "Memproses..."
+// tidak pernah kembali normal, polling saldo diam-diam macet), TANPA
+// pernah menampilkan error apapun ke user. Sekarang ada batas waktu
+// (timeoutMs, default 15 detik) supaya promise-nya selalu selesai
+// (berhasil ATAU gagal dengan pesan jelas), tidak pernah menggantung.
+// Sama seperti di spin.html: kalau timeout kepencet duluan, callback-nya
+// diganti fungsi kosong (BUKAN dihapus) -- supaya kalau responsnya
+// ternyata tetap datang belakangan, browser tidak melempar
+// "Uncaught ReferenceError" ke Console.
+function jsonpRequest(url, params, timeoutMs = 15000) {
+    return new Promise((resolve, reject) => {
+        const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+        const script = document.createElement('script');
+        let settled = false;
+        let timeoutId = null;
 
-        if (inQuotes) {
-            if (char === '"') {
-                if (text[i + 1] === '"') { field += '"'; i++; }
-                else { inQuotes = false; }
-            } else {
-                field += char;
-            }
-            continue;
-        }
+        const query = new URLSearchParams({ ...(params || {}), callback: callbackName }).toString();
+        script.src = url + (url.indexOf('?') === -1 ? '?' : '&') + query;
 
-        if (char === '"') { inQuotes = true; }
-        else if (char === ',') { row.push(field); field = ''; }
-        else if (char === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
-        else if (char === '\r') { /* diabaikan, \n yang menandai akhir baris */ }
-        else { field += char; }
-    }
+        const hapusScriptTag = () => {
+            if (script.parentNode) script.parentNode.removeChild(script);
+            if (timeoutId) clearTimeout(timeoutId);
+        };
 
-    if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
-    return rows;
+        window[callbackName] = function (data) {
+            if (settled) return;
+            settled = true;
+            hapusScriptTag();
+            delete window[callbackName]; // aman dihapus di sini, respons memang sudah beneran datang
+            resolve(data);
+        };
+
+        script.onerror = function () {
+            if (settled) return;
+            settled = true;
+            hapusScriptTag();
+            window[callbackName] = () => {}; // no-op, jaga-jaga respons telat tetap nyangkut
+            reject(new Error('Gagal menghubungi server (cek URL Apps Script / koneksi internet).'));
+        };
+
+        timeoutId = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            hapusScriptTag();
+            window[callbackName] = () => {}; // no-op, JANGAN delete (lihat catatan FIX di atas)
+            reject(new Error('Timeout menunggu respons server (lebih dari ' + (timeoutMs / 1000) + ' detik). Request kemungkinan tetap diproses di server, cuma responsnya belum sempat kembali.'));
+        }, timeoutMs);
+
+        document.body.appendChild(script);
+    });
 }
 
 // Menandakan apakah fetch/parsing ke Sheet TERAKHIR benar-benar berhasil. Dipakai
@@ -2675,21 +2953,31 @@ let lastMembersFetchSucceeded = false;
 // halaman profil ini (username, avatar, level, 'nf-id', role, streakDays,
 // premiumType, expiredDate, balance), jadi tidak ada logika render lain yang
 // perlu diubah -- cukup ganti sumber datanya saja.
-async function fetchMembersFromSheet() {
+async function fetchMembersFromSheet(sudahDicobaUlang) {
     try {
-        // Cache-busting timestamp, sama seperti fetch users.json sebelumnya, supaya
-        // browser tidak menyimpan versi lama data Sheet.
-        const response = await fetch(SHEET_MEMBERS_URL + '&t=' + Date.now(), { cache: 'no-store' });
-        if (!response.ok) throw new Error('Gagal mengambil data dari Google Sheet');
+        // PENTING: sebelumnya pakai endpoint CSV export Google
+        // (docs.google.com/.../export?format=csv). Endpoint itu ternyata di-cache
+        // beberapa saat di sisi server Google sendiri -- jadi walau kita sudah
+        // tambah parameter cache-busting & fetch dengan cache:'no-store' di
+        // browser, hasilnya TETAP bisa nyangkut versi lama (inilah sebabnya
+        // saldo/NFCash yang baru diubah di Sheet tidak langsung muncul walau
+        // halaman sudah di-refresh berkali-kali).
+        //
+        // Sekarang datanya diambil LANGSUNG lewat Apps Script (action=getMembers,
+        // lihat Code.gs) yang membaca Sheet secara live pakai SpreadsheetApp --
+        // tidak ada lapisan cache Google di tengah, jadi perubahan di Sheet
+        // (Balance, PremiumType, dll) langsung kebaca begitu halaman dimuat ulang.
+        if (SHEET_WRITE_URL.indexOf('GANTI_DENGAN_URL_WEB_APP') !== -1) {
+            throw new Error('SHEET_WRITE_URL belum diisi dengan URL Web App Apps Script.');
+        }
 
-        const csvText = await response.text();
-        const allRows = parseCSV(csvText).filter(r => r.length > 1 || (r.length === 1 && r[0] !== ''));
+        const result = await jsonpRequest(SHEET_WRITE_URL, { action: 'getMembers', t: Date.now() });
+        if (!result || !result.success) {
+            throw new Error((result && result.message) || 'Gagal mengambil data dari Apps Script');
+        }
 
-        if (allRows.length < 1) throw new Error('CSV dari Sheet kosong');
-
-        // Baris pertama = header apa adanya (tanpa tebak-tebakan tipe data).
-        const cols = allRows[0].map(c => c.trim());
-        const dataRows = allRows.slice(1);
+        const cols = (result.headers || []).map(c => String(c || '').trim());
+        const dataRows = result.rows || [];
 
         const users = dataRows
             .map(cells => {
@@ -2731,7 +3019,17 @@ async function fetchMembersFromSheet() {
         lastMembersFetchSucceeded = true;
         return users;
     } catch (error) {
-        console.error('Gagal memuat data member dari Google Sheet:', error);
+        // FIX: action=getMembers CUMA BACA (read-only), jadi aman dicoba ulang --
+        // beda dengan redeemCode/deductBalance/buyPremium yang tidak boleh
+        // diulang otomatis. Kalau gagal/timeout SEKALI, coba SEKALI LAGI setelah
+        // jeda singkat dulu sebelum benar-benar menyerah -- supaya koneksi yang
+        // cuma "ngedip" sesaat tidak langsung bikin halaman profil gagal tampil.
+        if (!sudahDicobaUlang) {
+            console.warn('[NEFA] getMembers gagal, mencoba sekali lagi dalam 2 detik...', error);
+            await new Promise(r => setTimeout(r, 2000));
+            return fetchMembersFromSheet(true);
+        }
+        console.error('Gagal memuat data member dari Apps Script:', error);
         lastMembersFetchSucceeded = false;
         return [];
     }
@@ -2751,6 +3049,70 @@ function forceLogoutProfil(reason) {
     setTimeout(() => {
         window.location.href = 'informasi.html';
     }, 1500);
+}
+
+
+// =====================================================================
+// FIX ERR_CACHE_OPERATION_NOT_SUPPORTED (video .mp4 latar/banner)
+// ---------------------------------------------------------------------
+// PENYEBAB: loadUserData() dipanggil berulang (interval sinkron, tab aktif
+// lagi, dsb) dan SETIAP KALI menulis ulang <video> lewat innerHTML. Video
+// lama dibuang saat request range-nya masih jalan, lalu request baru untuk
+// URL mp4 yang SAMA langsung dibuat -> cache HTTP Chrome untuk file
+// partial-content itu jadi bentrok dan muncul error
+// "net::ERR_CACHE_OPERATION_NOT_SUPPORTED". Ditambah: file mp4 yang sama
+// juga sempat diminta dua <video> sekaligus (latar + banner profil).
+// SOLUSI: video hanya dibuat ulang kalau SRC-nya benar-benar berubah, dan
+// kalau tetap gagal dimuat dicoba lagi (dengan parameter cache-buster).
+// =====================================================================
+const NEFA_VIDEO_STYLE = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;';
+
+function nefaBindVideoRetry(v, src) {
+    if (v._nefaRetryBound) return;
+    v._nefaRetryBound = true;
+    let tries = 0;
+    v.addEventListener('error', () => {
+        if (tries >= 2) {
+            console.warn('[NEFA] Video latar gagal dimuat, dipakai latar polos dulu:', src);
+            v.remove(); // dipasang ulang otomatis di loadUserData berikutnya
+            return;
+        }
+        tries++;
+        setTimeout(() => {
+            v.src = src + (src.indexOf('?') === -1 ? '?' : '&') + 'r=' + Date.now();
+            v.load();
+            const p = v.play();
+            if (p && p.catch) p.catch(() => {});
+        }, 700 * tries);
+    });
+}
+
+function nefaMountBgVideo(container, src) {
+    if (!container) return;
+    const cur = container.querySelector('video');
+    if (cur) {
+        const curSrc = cur.getAttribute('data-src') || cur.getAttribute('src');
+        if (curSrc === src) { nefaBindVideoRetry(cur, src); return; } // sudah terpasang -> JANGAN dibuat ulang
+    }
+    const v = document.createElement('video');
+    v.setAttribute('data-src', src);
+    v.muted = true; v.defaultMuted = true;
+    v.loop = true; v.autoplay = true; v.playsInline = true;
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+    v.preload = 'auto';
+    v.style.cssText = NEFA_VIDEO_STYLE;
+    nefaBindVideoRetry(v, src);
+    v.src = src;
+    container.replaceChildren(v);
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+}
+
+function nefaMountBannerImage(container, url) {
+    if (!container) return;
+    const cur = container.querySelector('img');
+    if (cur && !container.querySelector('video') && cur.getAttribute('src') === url) return;
+    container.innerHTML = `<img src="${url}" style="${NEFA_VIDEO_STYLE}">`;
 }
 
 async function loadUserData() {
@@ -2938,11 +3300,11 @@ if (nextLevelText === "Max") {
             if (videoBackgroundContainer) {
                 if (isPremiumType && hasValidExpiry && !isExpired) {
                     // Gunakan Gambar untuk Premium Aktif
-                    videoBackgroundContainer.innerHTML = `<video src="https://www.image2url.com/r2/default/videos/1787416526926-80ee35e3-b8d5-4eac-8a7b-e3630d09d73e.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
+                    nefaMountBgVideo(videoBackgroundContainer, "https://www.image2url.com/r2/default/videos/1787416526926-80ee35e3-b8d5-4eac-8a7b-e3630d09d73e.mp4");
                     // videoBackgroundContainer.innerHTML = `<img src="https://i.ibb.co.com/6Jcc8mLC/Gojo.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">`;
                 } else {
                     // Gunakan Video untuk Non-Premium atau Expired
-                    videoBackgroundContainer.innerHTML = `<video src="https://www.image2url.com/r2/default/videos/1787414606753-a80336f5-08b1-4cbb-9351-dad84148f233.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
+                    nefaMountBgVideo(videoBackgroundContainer, "https://www.image2url.com/r2/default/videos/1787414606753-a80336f5-08b1-4cbb-9351-dad84148f233.mp4");
                 }
             };
 
@@ -2950,9 +3312,9 @@ if (nextLevelText === "Max") {
                 if (isPremiumType && hasValidExpiry && !isExpired) {
                     // Gunakan Gambar untuk Premium Aktif
                      //profilBanner.innerHTML = `<video src="https://www.image2url.com/r2/default/videos/1787414746577-98b093c1-14a3-4d87-8df3-0590e8016cab.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
-                     profilBanner.innerHTML = `<video src="https://www.image2url.com/r2/default/videos/1787416169468-3b546f96-4c77-4178-bb93-73ca931cdfa4.mp4" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>`;
+                     nefaMountBgVideo(profilBanner, "https://www.image2url.com/r2/default/videos/1787416169468-3b546f96-4c77-4178-bb93-73ca931cdfa4.mp4");
                 } else {
-                     profilBanner.innerHTML = `<img src="https://i.ibb.co.com/F4NQDJjx/Banner-Profil.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">`;
+                     nefaMountBannerImage(profilBanner, "https://i.ibb.co.com/F4NQDJjx/Banner-Profil.png");
                     // Gunakan Video untuk Non-Premium atau Expired
                    
                 }
@@ -3011,7 +3373,7 @@ if (nextLevelText === "Max") {
                                 <div class="vip-info"><span>Berakhir Pada</span><b>${window.currentUser.expiredDate}</b></div>
                                 <div class="vip-info vip-right"><span>Status</span><b style="color:var(--red)">EXPIRED</b></div>
                             </div>
-                            <button onclick="kirimPesanWA('memperpanjang', '${namaPaket}')" class="expired-btn">
+                            <button onclick="belanjaPremium('memperpanjang', '${namaPaket}')" class="expired-btn">
                                 <i class="fa-solid fa-rotate-right"></i> Perpanjang Sekarang
                             </button>
                         </div>`;
@@ -3149,20 +3511,20 @@ if (nextLevelText === "Max") {
                     // Reset dulu ke kondisi default "BELI" untuk kedua tombol...
                     if (buyBtnAlpha) {
                         buyBtnAlpha.innerHTML = 'BELI NEFA ALPHA';
-                        buyBtnAlpha.setAttribute('onclick', "kirimPesanWA('membeli', 'NEFA ALPHA')");
+                        buyBtnAlpha.setAttribute('onclick', "belanjaPremium('membeli', 'NEFA ALPHA')");
                     }
                     if (buyBtnPriority) {
                         buyBtnPriority.innerHTML = 'BELI NEFA PRIORITY';
-                        buyBtnPriority.setAttribute('onclick', "kirimPesanWA('membeli', 'NEFA PRIORITY')");
+                        buyBtnPriority.setAttribute('onclick', "belanjaPremium('membeli', 'NEFA PRIORITY')");
                     }
 
                     // ...lalu ubah tombol paket yang sedang dipakai user menjadi "PERPANJANG"
                     if (window.currentUser.premiumType === 'basic' && buyBtnAlpha) {
                         buyBtnAlpha.innerHTML = 'PERPANJANG NEFA ALPHA';
-                        buyBtnAlpha.setAttribute('onclick', "kirimPesanWA('memperpanjang', 'NEFA ALPHA')");
+                        buyBtnAlpha.setAttribute('onclick', "belanjaPremium('memperpanjang', 'NEFA ALPHA')");
                     } else if (window.currentUser.premiumType === 'plus' && buyBtnPriority) {
                         buyBtnPriority.innerHTML = 'PERPANJANG NEFA PRIORITY';
-                        buyBtnPriority.setAttribute('onclick', "kirimPesanWA('memperpanjang', 'NEFA PRIORITY')");
+                        buyBtnPriority.setAttribute('onclick', "belanjaPremium('memperpanjang', 'NEFA PRIORITY')");
                     }
                 } else {
                     if (buySwiperSection) buySwiperSection.style.display = 'none';
@@ -3199,6 +3561,81 @@ if (nextLevelText === "Max") {
                 loadUserData();
             }
         }, SESSION_CHECK_INTERVAL_MS);
+
+        // --- SALDO NFCASH REAL-TIME ---
+        //
+        // Polling RINGAN (cuma 1 baris user, bukan seluruh tabel member) tiap
+        // beberapa detik lewat Apps Script (action=getUserData), supaya kalau
+        // admin ubah Balance langsung di Google Sheet, angka NfCash di halaman
+        // ini ikut ter-update sendiri tanpa perlu refresh manual.
+        //
+        // Kalau ternyata PremiumType/ExpiredDate juga berubah (mis. admin kasih
+        // premium manual), baru dipanggil loadUserData() penuh supaya badge/kartu
+        // premium ikut ter-render ulang -- polling ini sendiri sengaja TIDAK
+        // menyentuh bagian UI premium supaya tidak bikin flicker tiap beberapa detik.
+        // Dinaikkan dari 7 detik -> 15 detik: 7 detik terlalu sering (tiap tab/HP
+        // yang terbuka menembak request sendiri-sendiri ke Apps Script), jadi ikut
+        // menambah beban server yang bisa memicu timeout beruntun kalau banyak tab
+        // dibiarkan terbuka bersamaan. 15 detik masih terasa cukup real-time.
+        const SALDO_POLL_INTERVAL_MS = 15000;
+
+        // FIX ANTI-TUMPUK: kalau polling sebelumnya masih menunggu respons
+        // server (mis. lagi lambat), polling BERIKUTNYA yang dijadwalkan
+        // interval ini di-skip dulu -- supaya request tidak menumpuk jadi
+        // banyak sekaligus tiap 7 detik, yang malah memperparah beban server
+        // dan jadi salah satu penyebab "gagal terhubung ke server".
+        let pollSaldoSedangJalan = false;
+
+        async function pollSaldoRealtime() {
+            // Jangan polling kalau belum login, tab lagi tidak aktif (hemat kuota),
+            // atau URL Apps Script belum diisi.
+            const uname = localStorage.getItem('username');
+            if (!uname) return;
+            if (document.visibilityState !== 'visible') return;
+            if (typeof SHEET_WRITE_URL === 'undefined' || SHEET_WRITE_URL.indexOf('GANTI_DENGAN_URL_WEB_APP') !== -1) return;
+            if (pollSaldoSedangJalan) return;
+
+            pollSaldoSedangJalan = true;
+            try {
+                const result = await jsonpRequest(SHEET_WRITE_URL, {
+                    action: 'getUserData',
+                    username: uname,
+                    t: Date.now()
+                });
+
+                if (!result || !result.success || !window.currentUser) return;
+
+                const balanceBaru = result.balance;
+                const balanceLama = window.currentUser.balance;
+                const premiumBerubah = result.premiumType !== window.currentUser.premiumType ||
+                    result.expiredDate !== window.currentUser.expiredDate;
+
+                if (premiumBerubah) {
+                    // Ada perubahan status premium -> muat ulang semuanya biar konsisten.
+                    loadUserData();
+                    return;
+                }
+
+                if (String(balanceBaru) !== String(balanceLama)) {
+                    window.currentUser.balance = balanceBaru;
+                    const isUnlimited = String(balanceBaru).toLowerCase() === 'unlimited';
+                    localStorage.setItem(getSaldoKey(), isUnlimited ? 'unlimited' : (parseInt(balanceBaru, 10) || 0));
+                    renderSaldo();
+                }
+            } catch (err) {
+                // Diamkan saja -- ini polling latar belakang, jangan ganggu user dengan toast error.
+                console.error('Polling saldo gagal:', err);
+            } finally {
+                pollSaldoSedangJalan = false;
+            }
+        }
+
+        setInterval(pollSaldoRealtime, SALDO_POLL_INTERVAL_MS);
+        // Langsung cek sekali begitu tab kembali aktif (mis. user balik dari app lain),
+        // supaya tidak perlu nunggu sampai interval berikutnya.
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') pollSaldoRealtime();
+        });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -3423,7 +3860,8 @@ if (nextLevelText === "Max") {
             // Tentukan konfigurasi berdasarkan tipe
             const config = {
                 success: { icon: "fa-circle-check", color: "#19d84f" },
-                error: { icon: "fa-circle-xmark", color: "#ff2a17" }
+                error: { icon: "fa-circle-xmark", color: "#ff2a17" },
+                info: { icon: "fa-circle-info", color: "#f59e0b" }
             };
 
             const active = config[type] || config.success;
@@ -3475,6 +3913,217 @@ if (nextLevelText === "Max") {
     });
 </script> 
   -->
+
+<script>
+/* =====================================================================
+ * APPEND-ONLY PATCH: SINKRON ULANG "KODE HADIAH SAYA" DARI SERVER
+ * ---------------------------------------------------------------------
+ * MASALAH: kode hadiah yang ditampilkan/dipakai di halaman ini SELAMA
+ * INI cuma bergantung 100% pada localStorage 'nefa_kode_hadiah_<user>'
+ * yang ditulis dari spin.html. Kalau di spin.html reservasi kodenya
+ * gagal SAMPAI KE localStorage (mis. Apps Script lagi lambat >15-30
+ * detik seperti yang kelihatan di Console -- lihat spin.html untuk
+ * perbaikan di sisi sana juga), ATAU user buka halaman Tukar Kode ini
+ * dari perangkat/browser lain yang berbeda dari yang dipakai spin, kode
+ * yang sebenarnya SUDAH tersimpan sah di server jadi tidak pernah
+ * kelihatan/tidak bisa dimasukkan qty-nya dengan benar di sini.
+ *
+ * FIX: action "getMyCodesSafe" SUDAH ADA di Code.gs sejak lama untuk
+ * urusan ini tapi TERNYATA TIDAK PERNAH dipanggil oleh testp.html
+ * manapun. Sekarang dipanggil begitu halaman dimuat & tiap kali modal
+ * "Tukar Kode" dibuka, untuk menarik ulang semua kode yang tercatat sah
+ * di server atas nama user ini dan menggabungkannya ke localStorage
+ * lokal -- supaya qty gabungan & daftar kode selalu akurat, dari
+ * perangkat manapun dibuka.
+ * ===================================================================== */
+(function () {
+    function usernameSaatIni() {
+        return (window.currentUser && window.currentUser.username) || localStorage.getItem('username') || 'guest';
+    }
+
+    async function sinkronKodeSayaDariServer() {
+        if (!SHEET_WRITE_URL) return;
+        const uname = usernameSaatIni();
+        if (!uname || uname === 'guest') return;
+        try {
+            const result = await jsonpRequest(SHEET_WRITE_URL, {
+                action: 'getMyCodesSafe',
+                username: uname,
+                key: SHEET_WRITE_KEY,
+                t: Date.now()
+            }, 15000);
+            if (!result || !result.success || !Array.isArray(result.rows)) return;
+
+            const key = getKodeSayaKeyLokal();
+            let list = [];
+            try {
+                const raw = localStorage.getItem(key);
+                list = raw ? JSON.parse(raw) : [];
+                if (!Array.isArray(list)) list = [];
+            } catch (e) { list = []; }
+
+            const kodeSudahAda = new Set(list.map(i => (i && i.code) || ''));
+            let adaTambahan = false;
+
+            result.rows.forEach(row => {
+                if (!row.code || kodeSudahAda.has(row.code)) return;
+                list.unshift({ code: row.code, name: row.hadiah, qty: 1, time: Date.parse(row.waktu) || Date.now() });
+                kodeSudahAda.add(row.code);
+                adaTambahan = true;
+            });
+
+            if (adaTambahan) {
+                if (list.length > 200) list.length = 200;
+                localStorage.setItem(key, JSON.stringify(list));
+                console.log('[NEFA] Kode Hadiah Saya disinkron ulang dari server -- ada kode yang sebelumnya belum kelihatan di perangkat ini.');
+            }
+        } catch (e) {
+            console.warn('[NEFA] Sinkron getMyCodesSafe (testp) gagal, akan dicoba lagi nanti:', e);
+        }
+    }
+
+    // Sinkron begitu halaman selesai dimuat...
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(sinkronKodeSayaDariServer, 1500);
+    } else {
+        document.addEventListener('DOMContentLoaded', () => setTimeout(sinkronKodeSayaDariServer, 1500));
+    }
+
+    // ...dan setiap kali modal "Tukar Kode" dibuka (sebelum pembersihan
+    // kode kadaluarsa yang sudah ada, supaya kode yang baru muncul dari
+    // sinkronisasi ini juga ikut divalidasi).
+    if (typeof window.openRedeemModal === 'function') {
+        const originalOpenRedeemModal = window.openRedeemModal;
+        window.openRedeemModal = function () {
+            sinkronKodeSayaDariServer().finally(() => originalOpenRedeemModal());
+        };
+    }
+})();
+</script>
+    <script>
+        /* =========================
+           NEWBIEFAMS PROTECTION
+           MOBILE SAFE VERSION
+        ========================= */
+
+        (() => {
+
+            /* =========================
+               DISABLE RIGHT CLICK
+            ========================= */
+            document.addEventListener("contextmenu", (e) => {
+                e.preventDefault();
+            });
+
+            /* =========================
+               DISABLE IMAGE DRAG
+            ========================= */
+            document.addEventListener("dragstart", (e) => {
+
+                if (e.target.tagName === "IMG") {
+                    e.preventDefault();
+                }
+
+            });
+
+            /* =========================
+               IMAGE PROTECTION
+            ========================= */
+            document.querySelectorAll("img").forEach(img => {
+
+                // Anti drag
+                img.setAttribute("draggable", "false");
+
+                // Anti select
+                img.style.userSelect = "none";
+                img.style.webkitUserSelect = "none";
+
+                // Anti long press save image
+                img.style.webkitTouchCallout = "none";
+
+            });
+
+            /* =========================
+               DISABLE SHORTCUT INSPECT
+            ========================= */
+            document.addEventListener("keydown", function (e) {
+
+                const key = e.key.toLowerCase();
+
+                // F12
+                if (e.key === "F12") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + I
+                if (e.ctrlKey && e.shiftKey && key === "i") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + J
+                if (e.ctrlKey && e.shiftKey && key === "j") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + SHIFT + C
+                if (e.ctrlKey && e.shiftKey && key === "c") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + U
+                if (e.ctrlKey && key === "u") {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // CTRL + S
+                if (e.ctrlKey && key === "s") {
+                    e.preventDefault();
+                    return false;
+                }
+
+            }, true);
+
+
+
+            /* =========================
+               ANTI IFRAME
+            ========================= */
+            if (window.top !== window.self) {
+                document.body.innerHTML = "";
+            }
+
+            /* =========================
+               PRINTSCREEN BLUR
+            ========================= */
+            document.addEventListener("keyup", (e) => {
+
+                if (e.key === "PrintScreen") {
+
+                    document.body.style.transition = ".3s";
+                    document.body.style.filter = "blur(20px)";
+
+                    setTimeout(() => {
+                        document.body.style.filter = "blur(0)";
+                    }, 2000);
+
+                }
+
+            });
+
+            /* =========================
+               AUTO CLEAR CONSOLE
+            ========================= */
+            setInterval(() => {
+                console.clear();
+            }, 2000);
+
+        })();
+    </script>
 </body>
 
 </html>
