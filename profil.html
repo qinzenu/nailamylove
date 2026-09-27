@@ -1675,6 +1675,88 @@ body {
         margin-bottom: 20px;
     }
     </style>
+
+<style>
+/* =========================================================
+   ACCOUNT CHANGE PROCESSOR - ringan, tanpa library tambahan
+   Dipakai untuk Ubah Foto Profil / Password / Pemulihan
+   ========================================================= */
+#accountChangeProcessor {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0,0,0,.78);
+}
+#accountChangeProcessor.show { display: flex; }
+.account-process-card {
+    width: min(100%, 360px);
+    padding: 24px;
+    border-radius: 22px;
+    background: #111;
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 18px 50px rgba(0,0,0,.55);
+}
+.account-process-title {
+    margin: 0 0 8px;
+    font-size: 19px;
+    font-weight: 800;
+    color: #fff;
+}
+.account-process-status {
+    min-height: 22px;
+    margin-bottom: 16px;
+    color: #aaa;
+    font-size: 13px;
+}
+.account-process-track {
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #292929;
+}
+.account-process-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg,#12c948,#2cff68);
+    transition: width .16s linear;
+}
+.account-process-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    color: #aaa;
+    font-size: 12px;
+}
+.account-process-percent {
+    color: #2cff68;
+    font-weight: 800;
+}
+.account-process-result {
+    display: none;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(25,216,79,.08);
+    border: 1px solid rgba(25,216,79,.2);
+    color: #2cff68;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+.account-process-result.error {
+    background: rgba(255,42,23,.08);
+    border-color: rgba(255,42,23,.2);
+    color: #ff6b5c;
+}
+</style>
+
 </head>
 
 <body>
@@ -2026,11 +2108,11 @@ body {
     <script>
         // 1. Daftar Kode Diskon
         const daftarKode = {
-            "AGUSTUS26": 0.0556,
-            "HUTRI-81TH": 0.3846,
+            "OKTOBER26": 0.0556,
+            "UPDATEOCTOBER": 0.3846,
             "ZENU": 0.1667,
-            "NANAI": 0.5,
-            "FELICIA": 0.5556
+            "HBDNAILA": 0.5,
+            "HBDSYIFA": 0.5556
         };
 
         // 2. Fungsi Pembantu
@@ -2191,11 +2273,14 @@ body {
             document.getElementById('redeemModal').style.display = 'flex';
             setScrollLock(true);
 
-            // Bersihkan diam-diam kode kadaluarsa tiap kali modal ini dibuka,
-            // supaya daftar kode user selalu bersih dari kode yang sudah pasti
-            // tidak bisa diklaim lagi (tidak perlu user coba redeem dulu satu-
-            // satu buat tahu kodenya masih hidup atau tidak).
-            bersihkanSemuaKodeKadaluarsa();
+            // PENTING: jangan tunggu request server di sini. Modal harus terbuka
+            // INSTAN supaya tidak terasa lag/frame drop. Sinkronisasi dilakukan
+            // di background setelah UI sudah tampil.
+            setTimeout(() => {
+                if (typeof window.sinkronKodeSayaDariServer === 'function') {
+                    window.sinkronKodeSayaDariServer();
+                }
+            }, 450);
         }
 
         function closeRedeemModal() {
@@ -2313,7 +2398,23 @@ body {
             if (btnEl) {
                 btnEl.disabled = true;
                 btnEl.dataset.originalText = btnEl.textContent;
-                btnEl.textContent = "Memproses...";
+
+                // Animasi khusus saat redeem kode hadiah dari Spin:
+                // Memproses. -> Memproses.. -> Memproses... -> berulang.
+                const animasiRedeem = ["Memproses.", "Memproses..", "Memproses..."];
+                let indexAnimasiRedeem = 0;
+                btnEl.textContent = animasiRedeem[indexAnimasiRedeem];
+
+                // Hentikan animasi lama jika ada.
+                if (btnEl._redeemAnimTimer) {
+                    clearInterval(btnEl._redeemAnimTimer);
+                }
+
+                btnEl._redeemAnimTimer = setInterval(() => {
+                    if (!btnEl || btnEl.disabled !== true) return;
+                    indexAnimasiRedeem = (indexAnimasiRedeem + 1) % animasiRedeem.length;
+                    btnEl.textContent = animasiRedeem[indexAnimasiRedeem];
+                }, 450);
             }
 
             // Kalau hadiah yang sama sempat menang berkali-kali & digabung sisi
@@ -2345,6 +2446,22 @@ body {
                     // oleh Apps Script) -- jadi hapus juga dari daftar "Kode Hadiah
                     // Saya" di localStorage supaya tidak ada kode nyangkut yang
                     // kelihatan masih bisa dipakai padahal sudah dipakai.
+                    // Beri sinyal lintas-tab ke spin.html agar status riwayat
+                    // langsung berubah menjadi "Hadiahnya Sudah Kamu Claim".
+                    try {
+                        const claimEvent = {
+                            username: uname,
+                            code: input,
+                            claimedAt: Number(result.claimedAt) || Date.now()
+                        };
+                        localStorage.setItem(
+                            'nefa_claim_event_' + uname,
+                            JSON.stringify(claimEvent)
+                        );
+                    } catch (e) {
+                        console.warn('[NEFA] Gagal mengirim event status claim:', e);
+                    }
+
                     hapusKodeSayaLokal(input);
 
                     // Apps Script sudah langsung mengubah PremiumType/ExpiredDate/Balance
@@ -2380,6 +2497,10 @@ body {
                 showToast("Gagal menghubungi server, coba lagi.", "error");
             } finally {
                 if (btnEl) {
+                    if (btnEl._redeemAnimTimer) {
+                        clearInterval(btnEl._redeemAnimTimer);
+                        btnEl._redeemAnimTimer = null;
+                    }
                     btnEl.disabled = false;
                     btnEl.textContent = btnEl.dataset.originalText || "Tukar Kode";
                 }
@@ -2508,7 +2629,18 @@ body {
     dynamicForm.innerHTML = forms[view] + (isRedeem ? '' : `<button id="saveBtn" class="buy-btn" style="width:100%; margin-top:20px; display: ${hideSaveBtn ? 'none' : 'block'};">Simpan Perubahan</button>`);
 
     // --- LOGIKA TOMBOL OTOMATIS ---
-   if (!isRedeem && !hideSaveBtn) {
+    // FIX: sebelumnya blok ini dilewati kalau hideSaveBtn true (akun yang SUDAH
+    // punya email pemulihan) -- akibatnya tombol #saveBtn TIDAK PERNAH diberi
+    // event listener (onclick & pemantauan input) sama sekali. Saat user klik
+    // "Ubah Pemulihan Akun" (showRecoveryInput menampilkan tombolnya lagi lewat
+    // style.display), tombol itu SECARA VISUAL ada tapi klik-nya tidak
+    // melakukan apa-apa karena belum pernah dipasangi onclick. Makanya untuk
+    // akun yang SUDAH punya email pemulihan, "Simpan Perubahan" tidak bisa
+    // dipencet sama sekali. Sekarang listener SELALU dipasang untuk semua view
+    // (termasuk saat hideSaveBtn true) -- visibilitas awal tombol tetap diatur
+    // oleh updateBtnVisibility() (nilai input kosong = disembunyikan), jadi
+    // tampilannya tidak berubah, cuma tombolnya sekarang benar-benar berfungsi.
+    if (!isRedeem) {
         const saveBtn = document.getElementById('saveBtn');
         const inputField = dynamicForm.querySelector('.form-control');
         
@@ -2531,7 +2663,30 @@ body {
         inputField.addEventListener('input', updateBtnVisibility);
 
         // Set aksi klik
-        saveBtn.onclick = () => {
+        saveBtn.onclick = async () => {
+            const inputField = dynamicForm.querySelector('.form-control');
+            const value = inputField ? inputField.value.trim() : '';
+
+            if (!window.currentUser) {
+                showToast('Kamu harus login dulu.', 'error');
+                return;
+            }
+
+            if (!value) {
+                showToast('Data perubahan belum diisi.', 'error');
+                return;
+            }
+
+            if (view === 'editPassword' && (value.length < 8 || value.length > 16)) {
+                showToast('Password harus 8-16 karakter.', 'error');
+                return;
+            }
+
+            await prosesPerubahanAkun(view, value, saveBtn);
+            return;
+
+            /* KODE ASLI DIPERTAHANKAN — tidak dihapus, hanya tidak dipanggil
+               karena sekarang perubahan dilakukan langsung melalui Web App. */
             const inputs = dynamicForm.querySelectorAll('.form-control');
             let labelAksi = (view === 'editProfile') ? "foto profil baru" : (view === 'editPassword') ? "password" : "pemulihan akun baru";
             let dataInput = Array.from(inputs).map(i => i.value).join(' | ');
@@ -2550,6 +2705,198 @@ body {
             document.getElementById('recoveryDisplay').style.display = 'none';
             document.getElementById('recoveryInputContainer').style.display = 'block';
             document.getElementById('saveBtn').style.display = 'block';
+        }
+
+
+        // =========================================================
+        // PERUBAHAN AKUN LANGSUNG DI WEB
+        // - Tidak lagi hanya mengirim pesan WhatsApp.
+        // - Progress 0% -> 100% ditampilkan selama request berlangsung.
+        // - Progress ditahan di 92% sampai server benar-benar membalas,
+        //   sehingga 100% hanya tercapai setelah perubahan berhasil.
+        // =========================================================
+        const ACCOUNT_PROCESS_TEXTS = [
+            'Memproses.',
+            'Memproses..',
+            'Memproses...'
+        ];
+
+        function sleepAkun(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function setAccountProcessUI(percent, text, detail) {
+            const fill = document.getElementById('accountProcessFill');
+            const percentEl = document.getElementById('accountProcessPercent');
+            const statusEl = document.getElementById('accountProcessStatus');
+            const detailEl = document.getElementById('accountProcessDetail');
+
+            const p = Math.max(0, Math.min(100, Math.round(percent)));
+            if (fill) fill.style.width = p + '%';
+            if (percentEl) percentEl.textContent = p + '%';
+            if (statusEl && text) statusEl.textContent = text;
+            if (detailEl && detail) detailEl.textContent = detail;
+        }
+
+        function showAccountProcessor() {
+            const modal = document.getElementById('accountChangeProcessor');
+            const result = document.getElementById('accountProcessResult');
+            if (result) {
+                result.style.display = 'none';
+                result.classList.remove('error');
+            }
+            if (modal) {
+                modal.classList.add('show');
+                modal.setAttribute('aria-hidden', 'false');
+            }
+            setAccountProcessUI(0, ACCOUNT_PROCESS_TEXTS[0], 'Menyiapkan perubahan...');
+        }
+
+        function hideAccountProcessor() {
+            const modal = document.getElementById('accountChangeProcessor');
+            if (modal) {
+                modal.classList.remove('show');
+                modal.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        function accountProcessResult(success, message) {
+            const result = document.getElementById('accountProcessResult');
+            if (!result) return;
+            result.classList.toggle('error', !success);
+            result.textContent = message || (success
+                ? 'Berhasil Melakukan Perubahan'
+                : 'Perubahan gagal dilakukan.');
+            result.style.display = 'block';
+        }
+
+        async function prosesPerubahanAkun(view, value, saveBtn) {
+            if (window._accountChangeBusy) return;
+            window._accountChangeBusy = true;
+
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.dataset.originalText = saveBtn.textContent;
+                saveBtn.textContent = 'Memproses.';
+            }
+
+            showAccountProcessor();
+
+            let progress = 0;
+            let textIndex = 0;
+            let progressTimer = null;
+            let textTimer = null;
+
+            try {
+                progressTimer = setInterval(() => {
+                    // Jangan pernah melewati 92% sebelum server menjawab.
+                    if (progress < 92) {
+                        progress += progress < 60 ? 2 : 1;
+                        setAccountProcessUI(
+                            progress,
+                            ACCOUNT_PROCESS_TEXTS[textIndex % ACCOUNT_PROCESS_TEXTS.length],
+                            ACCOUNT_PROCESS_TEXTS[textIndex % ACCOUNT_PROCESS_TEXTS.length]
+                        );
+                    }
+                }, 120);
+
+                textTimer = setInterval(() => {
+                    textIndex++;
+                    setAccountProcessUI(
+                        progress,
+                        ACCOUNT_PROCESS_TEXTS[textIndex % ACCOUNT_PROCESS_TEXTS.length],
+                        ACCOUNT_PROCESS_TEXTS[textIndex % ACCOUNT_PROCESS_TEXTS.length]
+                    );
+                }, 450);
+
+                if (!SHEET_WRITE_URL || SHEET_WRITE_URL.indexOf('GANTI_DENGAN_URL_WEB_APP') !== -1) {
+                    throw new Error('URL Apps Script belum diisi.');
+                }
+
+                const user = window.currentUser || {};
+                const action = view === 'editProfile'
+                    ? 'avatar'
+                    : view === 'editPassword'
+                        ? 'password'
+                        : 'recovery';
+
+                // Semua perubahan akun memakai NF-ID + username + key.
+                // Server tetap memvalidasi ulang baris dan field yang diubah.
+                const result = await jsonpRequest(
+                    SHEET_WRITE_URL,
+                    {
+                        action: 'updateAccountSetting',
+                        key: SHEET_WRITE_KEY,
+                        nfId: String(user['nf-id'] || ''),
+                        rowNumber: String(user._sheetRow || ''),
+                        username: String(user.username || ''),
+                        field: action,
+                        value: value,
+                        requestId: 'WEB_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10)
+                    },
+                    20000
+                );
+
+                if (!result || !result.success) {
+                    throw new Error((result && result.message) || 'Perubahan gagal disimpan.');
+                }
+
+                // Server sudah berhasil. Sekarang baru naikkan ke 100%.
+                if (progressTimer) clearInterval(progressTimer);
+                progressTimer = null;
+                if (textTimer) clearInterval(textTimer);
+                textTimer = null;
+                setAccountProcessUI(100, 'Selesai', 'Perubahan sudah tersimpan.');
+
+                if (action === 'avatar') {
+                    window.currentUser.avatar = value;
+                    const avatar = document.getElementById('avatarImg');
+                    if (avatar) avatar.src = value;
+                } else if (action === 'password') {
+                    window.currentUser.password = value;
+                } else if (action === 'recovery') {
+                    window.currentUser.recovery = value;
+                }
+
+                accountProcessResult(true, 'Berhasil Melakukan Perubahan');
+                showToast('Berhasil Melakukan Perubahan', 'success');
+
+                await sleepAkun(900);
+                hideAccountProcessor();
+                closeForm();
+            } catch (err) {
+                console.error('[NEFA] Gagal mengubah data akun:', err);
+
+                if (progressTimer) clearInterval(progressTimer);
+                progressTimer = null;
+                if (textTimer) clearInterval(textTimer);
+                textTimer = null;
+
+                setAccountProcessUI(
+                    Math.min(progress, 92),
+                    ACCOUNT_PROCESS_TEXTS[0],
+                    'Server belum berhasil menyimpan perubahan.'
+                );
+                accountProcessResult(false, err && err.message
+                    ? err.message
+                    : 'Gagal menghubungi server. Coba lagi.');
+
+                showToast(
+                    err && err.message
+                        ? err.message
+                        : 'Gagal menghubungi server. Coba lagi.',
+                    'error'
+                );
+            } finally {
+                if (progressTimer) clearInterval(progressTimer);
+                if (textTimer) clearInterval(textTimer);
+                window._accountChangeBusy = false;
+
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = saveBtn.dataset.originalText || 'Simpan Perubahan';
+                }
+            }
         }
 
         function closeForm(event) {
@@ -2971,7 +3318,7 @@ async function fetchMembersFromSheet(sudahDicobaUlang) {
             throw new Error('SHEET_WRITE_URL belum diisi dengan URL Web App Apps Script.');
         }
 
-        const result = await jsonpRequest(SHEET_WRITE_URL, { action: 'getMembers', t: Date.now() });
+        const result = await jsonpRequest(SHEET_WRITE_URL, { action: 'getMembers', t: Date.now() }, 20000);
         if (!result || !result.success) {
             throw new Error((result && result.message) || 'Gagal mengambil data dari Apps Script');
         }
@@ -3002,7 +3349,8 @@ async function fetchMembersFromSheet(sudahDicobaUlang) {
                     balance: raw['Balance'] || 0,
                     recovery: raw['Recovery'] || '',
                     telegramId: raw['Telegram ID'] || '',
-                    waktu: raw['Waktu'] || ''
+                    waktu: raw['Waktu'] || '',
+                    _sheetRow: Number(raw['_sheetRow'] || 0)
                 };
             })
             // buang baris kosong di Sheet (yang belum diisi Username)
@@ -3597,11 +3945,17 @@ if (nextLevelText === "Max") {
 
             pollSaldoSedangJalan = true;
             try {
+                // FIX: timeout dinaikkan dari default 15 detik -> 20 detik supaya
+                // tidak gampang "Timeout menunggu respons server" cuma karena Apps
+                // Script sedang agak lambat (mis. cold start) -- ini penyebab
+                // console error "Polling saldo gagal: Error: Timeout..." yang terlihat
+                // di DevTools. Menaikkan timeout mengurangi kegagalan yang sebetulnya
+                // cuma "belum sempat balas", bukan benar-benar putus koneksi.
                 const result = await jsonpRequest(SHEET_WRITE_URL, {
                     action: 'getUserData',
                     username: uname,
                     t: Date.now()
-                });
+                }, 20000);
 
                 if (!result || !result.success || !window.currentUser) return;
 
@@ -3624,7 +3978,23 @@ if (nextLevelText === "Max") {
                 }
             } catch (err) {
                 // Diamkan saja -- ini polling latar belakang, jangan ganggu user dengan toast error.
-                console.error('Polling saldo gagal:', err);
+                // FIX: diubah dari console.error -> console.warn (supaya tidak tampil
+                // sebagai "Error" merah di DevTools Console, karena ini kegagalan
+                // sementara yang memang sudah ditangani dengan retry di bawah, bukan
+                // bug yang perlu ditindaklanjuti).
+                console.warn('[NEFA] Polling saldo gagal (akan dicoba lagi otomatis):', err && err.message ? err.message : err);
+
+                // BARU: supaya saldo NFC tetap terasa realtime walau satu kali polling
+                // gagal/timeout (mis. Apps Script lagi lambat "cold start"), coba lagi
+                // lebih cepat (5 detik) alih-alih menunggu sampai interval penuh
+                // berikutnya (15 detik). Timer lama (kalau ada) dibersihkan dulu supaya
+                // tidak menumpuk jadi beberapa retry sekaligus.
+                clearTimeout(window._pollSaldoRetryTimer);
+                window._pollSaldoRetryTimer = setTimeout(() => {
+                    pollSaldoSedangJalan = false;
+                    pollSaldoRealtime();
+                }, 5000);
+                return;
             } finally {
                 pollSaldoSedangJalan = false;
             }
@@ -3916,91 +4286,138 @@ if (nextLevelText === "Max") {
 
 <script>
 /* =====================================================================
- * APPEND-ONLY PATCH: SINKRON ULANG "KODE HADIAH SAYA" DARI SERVER
+ * PATCH RINGAN: SINKRON "KODE HADIAH SAYA" TANPA MEMBLOKIR MODAL
  * ---------------------------------------------------------------------
- * MASALAH: kode hadiah yang ditampilkan/dipakai di halaman ini SELAMA
- * INI cuma bergantung 100% pada localStorage 'nefa_kode_hadiah_<user>'
- * yang ditulis dari spin.html. Kalau di spin.html reservasi kodenya
- * gagal SAMPAI KE localStorage (mis. Apps Script lagi lambat >15-30
- * detik seperti yang kelihatan di Console -- lihat spin.html untuk
- * perbaikan di sisi sana juga), ATAU user buka halaman Tukar Kode ini
- * dari perangkat/browser lain yang berbeda dari yang dipakai spin, kode
- * yang sebenarnya SUDAH tersimpan sah di server jadi tidak pernah
- * kelihatan/tidak bisa dimasukkan qty-nya dengan benar di sini.
+ * Sebelumnya saat Tukar Kode dibuka ada dua pekerjaan network yang bisa
+ * terasa berat:
+ *   1) menunggu getMyCodesSafe sebelum modal ditampilkan;
+ *   2) mengecek setiap kode satu-per-satu lewat checkCode.
  *
- * FIX: action "getMyCodesSafe" SUDAH ADA di Code.gs sejak lama untuk
- * urusan ini tapi TERNYATA TIDAK PERNAH dipanggil oleh testp.html
- * manapun. Sekarang dipanggil begitu halaman dimuat & tiap kali modal
- * "Tukar Kode" dibuka, untuk menarik ulang semua kode yang tercatat sah
- * di server atas nama user ini dan menggabungkannya ke localStorage
- * lokal -- supaya qty gabungan & daftar kode selalu akurat, dari
- * perangkat manapun dibuka.
+ * Sekarang modal dibuka LANGSUNG. Server hanya dipanggil di background
+ * dengan SATU request getMyCodesSafe. Hasil server dipakai untuk:
+ *   - menambahkan kode yang belum ada di localStorage;
+ *   - membuang kode lokal yang sudah tidak aktif di server;
+ *   - mempertahankan qty lokal untuk kode yang masih aktif.
  * ===================================================================== */
 (function () {
     function usernameSaatIni() {
         return (window.currentUser && window.currentUser.username) || localStorage.getItem('username') || 'guest';
     }
 
+    let syncSedangBerjalan = false;
+
     async function sinkronKodeSayaDariServer() {
-        if (!SHEET_WRITE_URL) return;
+        if (syncSedangBerjalan || !SHEET_WRITE_URL) return;
         const uname = usernameSaatIni();
         if (!uname || uname === 'guest') return;
+
+        syncSedangBerjalan = true;
         try {
             const result = await jsonpRequest(SHEET_WRITE_URL, {
                 action: 'getMyCodesSafe',
                 username: uname,
                 key: SHEET_WRITE_KEY,
                 t: Date.now()
-            }, 15000);
+            }, 10000);
+
             if (!result || !result.success || !Array.isArray(result.rows)) return;
 
             const key = getKodeSayaKeyLokal();
-            let list = [];
+            let localList = [];
             try {
                 const raw = localStorage.getItem(key);
-                list = raw ? JSON.parse(raw) : [];
-                if (!Array.isArray(list)) list = [];
-            } catch (e) { list = []; }
+                localList = raw ? JSON.parse(raw) : [];
+                if (!Array.isArray(localList)) localList = [];
+            } catch (e) {
+                localList = [];
+            }
 
-            const kodeSudahAda = new Set(list.map(i => (i && i.code) || ''));
-            let adaTambahan = false;
-
+            // Server adalah sumber kebenaran untuk status aktif kode.
+            // Map lokal dipakai untuk mempertahankan qty/nama/time yang sudah ada.
+            const serverMap = new Map();
             result.rows.forEach(row => {
-                if (!row.code || kodeSudahAda.has(row.code)) return;
-                list.unshift({ code: row.code, name: row.hadiah, qty: 1, time: Date.parse(row.waktu) || Date.now() });
-                kodeSudahAda.add(row.code);
-                adaTambahan = true;
+                const code = String(row && row.code || '').trim().toUpperCase().replace(/\s+/g, '');
+                if (!code) return;
+                serverMap.set(code, row);
             });
 
-            if (adaTambahan) {
-                if (list.length > 200) list.length = 200;
-                localStorage.setItem(key, JSON.stringify(list));
-                console.log('[NEFA] Kode Hadiah Saya disinkron ulang dari server -- ada kode yang sebelumnya belum kelihatan di perangkat ini.');
-            }
+            const localMap = new Map();
+            localList.forEach(item => {
+                const code = String(item && item.code || '').trim().toUpperCase().replace(/\s+/g, '');
+                if (code) localMap.set(code, item);
+            });
+
+            const merged = [];
+
+            // Pertahankan urutan lokal, tetapi hanya kode yang masih aktif di server.
+            localList.forEach(item => {
+                const code = String(item && item.code || '').trim().toUpperCase().replace(/\s+/g, '');
+                if (!code || !serverMap.has(code)) return;
+                const row = serverMap.get(code);
+                merged.push({
+                    ...item,
+                    code: code,
+                    name: item.name || row.hadiah || '',
+                    qty: Number(item.qty) > 0 ? Number(item.qty) : 1,
+                    time: item.time || Date.parse(row.waktu) || Date.now()
+                });
+            });
+
+            // Tambahkan kode sah dari server yang belum ada di browser ini.
+            result.rows.forEach(row => {
+                const code = String(row && row.code || '').trim().toUpperCase().replace(/\s+/g, '');
+                if (!code || localMap.has(code)) return;
+                merged.unshift({
+                    code: code,
+                    name: String(row.hadiah || ''),
+                    qty: 1,
+                    time: Date.parse(row.waktu) || Date.now()
+                });
+            });
+
+            if (merged.length > 200) merged.length = 200;
+            localStorage.setItem(key, JSON.stringify(merged));
         } catch (e) {
-            console.warn('[NEFA] Sinkron getMyCodesSafe (testp) gagal, akan dicoba lagi nanti:', e);
+            // Gagal sync tidak boleh menghalangi modal atau fungsi redeem.
+            console.warn('[NEFA] Sinkron kode background gagal:', e);
+        } finally {
+            syncSedangBerjalan = false;
         }
     }
 
-    // Sinkron begitu halaman selesai dimuat...
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        setTimeout(sinkronKodeSayaDariServer, 1500);
-    } else {
-        document.addEventListener('DOMContentLoaded', () => setTimeout(sinkronKodeSayaDariServer, 1500));
-    }
+    // Expose supaya openRedeemModal bisa memulai sync TANPA menunggu hasilnya.
+    window.sinkronKodeSayaDariServer = sinkronKodeSayaDariServer;
 
-    // ...dan setiap kali modal "Tukar Kode" dibuka (sebelum pembersihan
-    // kode kadaluarsa yang sudah ada, supaya kode yang baru muncul dari
-    // sinkronisasi ini juga ikut divalidasi).
-    if (typeof window.openRedeemModal === 'function') {
-        const originalOpenRedeemModal = window.openRedeemModal;
-        window.openRedeemModal = function () {
-            sinkronKodeSayaDariServer().finally(() => originalOpenRedeemModal());
-        };
+    // Sinkron awal dilakukan santai di background, setelah UI utama selesai.
+    const mulaiSync = () => setTimeout(sinkronKodeSayaDariServer, 2500);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mulaiSync, { once: true });
+    } else {
+        mulaiSync();
     }
 })();
 </script>
-    <script>
+
+<!-- Processor perubahan akun: pure HTML/CSS/JS agar tetap ringan -->
+<div id="accountChangeProcessor" aria-hidden="true">
+    <div class="account-process-card" role="status" aria-live="polite">
+        <div class="account-process-title">Memproses perubahan</div>
+        <div id="accountProcessStatus" class="account-process-status">Memproses</div>
+        <div class="account-process-track">
+            <div id="accountProcessFill" class="account-process-fill"></div>
+        </div>
+        <div class="account-process-bottom">
+            <span id="accountProcessDetail">Mohon tunggu...</span>
+            <span id="accountProcessPercent" class="account-process-percent">0%</span>
+        </div>
+        <div id="accountProcessResult" class="account-process-result">
+            Berhasil Melakukan Perubahan
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
         /* =========================
            NEWBIEFAMS PROTECTION
            MOBILE SAFE VERSION
@@ -4124,6 +4541,4 @@ if (nextLevelText === "Max") {
 
         })();
     </script>
-</body>
-
 </html>
