@@ -154,8 +154,8 @@
                             class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-11 pr-12 py-3 text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition shadow-inner"
                             placeholder="Masukkan password">
                         <button type="button" onclick="toggleLoginPassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
-    <i id="login-password-eye" class="fa-solid fa-eye-slash text-sm"></i>
-</button>
+                            <i id="login-password-eye" class="fa-solid fa-eye-slash text-sm"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -164,14 +164,14 @@
                     <span class="flex-1"></span>
                 </div>
 
-                                <button type="submit" id="login-submit-btn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-bold text-sm btn-glow active:scale-[0.98] transition flex items-center justify-center space-x-2">
+                <button type="submit" id="login-submit-btn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-bold text-sm btn-glow active:scale-[0.98] transition flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-right-to-bracket text-base"></i>
                     <span>Masuk ke Akun</span>
                 </button>
 
                 <p class="text-center text-xs text-slate-400 pt-1">
                     Belum Punya Akun?
-                    <a href="../daftar.html" class="text-amber-400 font-bold hover:text-amber-300 hover:none transition">Buat Akun</a>
+                    <a href="register.html" class="text-amber-400 font-bold hover:text-amber-300 hover:underline transition">Buat Akun</a>
                 </p>
             </form>
             <p class="text-center text-[11px] text-slate-500 mt-6">Created by Zenu 2026</p>
@@ -359,7 +359,7 @@
         </div>
     </div>
 
-    <!-- ================= PRIZEPOOL MODAL (daftar hadiah & peluang) ================= -->
+    <!-- ================= PRIZEPOOL MODAL (daftar hadiah & peluangnya) ================= -->
     <div id="prizepool-modal" role="dialog" aria-modal="true" aria-labelledby="prizepool-title" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300" onclick="if (event.target === this) closePrizePoolModal()">
         <div id="prizepool-modal-card" class="glass-modal rounded-3xl w-full max-w-md max-h-[88vh] flex flex-col shadow-2xl transform scale-95 transition-transform duration-300 relative overflow-hidden">
             <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-56 h-40 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
@@ -1332,12 +1332,12 @@
         }
 
         function toggleLoginPassword() {
-    const input = document.getElementById('login-password');
-    const eye = document.getElementById('login-password-eye');
-    const show = input.type === 'password';
-    input.type = show ? 'text' : 'password';
-    eye.className = show ? 'fa-solid fa-eye text-sm' : 'fa-solid fa-eye-slash text-sm';
-}
+            const input = document.getElementById('login-password');
+            const eye = document.getElementById('login-password-eye');
+            const show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            eye.className = show ? 'fa-solid fa-eye text-sm' : 'fa-solid fa-eye-slash text-sm';
+        }
 
         async function handleLoginSubmit(e) {
             e.preventDefault();
@@ -2606,6 +2606,14 @@
             if (list.length > 200) list.length = 200;
         }
         localStorage.setItem(key, JSON.stringify(list));
+
+        // BARU: sambungkan kode yang baru selesai direservasi ke baris
+        // riwayat yang masih menunggu (name sama, code masih kosong,
+        // belum claimed) -- supaya kode langsung tampil di Riwayat Hadiah,
+        // bukan cuma di daftar "Kode Hadiah Saya".
+        if (typeof updateHistoryCodeForPrize === 'function') {
+            updateHistoryCodeForPrize(prizeName, kode);
+        }
     }
 
     async function cobaReserveSekali(prizeName, requestId) {
@@ -2715,26 +2723,20 @@
     window.NEFA_kodePending = { getPendingList: getPendingList };
 
     // ------------------------------------------------------------------
-    // Override showWinnerModal: tampilkan "Sedang memproses..." (bukan
-    // langsung "Hubungi admin untuk klaim") untuk hadiah yang kodenya
-    // masih pending, dan perbarui otomatis begitu kodenya siap.
+    // Override showWinnerModal: tampilkan "Sedang memproses..." (BUKAN
+    // "Hubungi admin untuk klaim" -- tidak ada lagi jalur yang berakhir
+    // di admin, kode SELALU ditunggu sampai selesai lewat retry & sinkron
+    // background) untuk hadiah yang kodenya masih pending, dan perbarui
+    // otomatis begitu kodenya siap.
     // ------------------------------------------------------------------
     const modalPrizeCardHtml = (w, label) => {
         if (w.codes.length === 0) {
-            const masihPending = getPendingList().some(p => p.prizeName === w.name);
-            if (masihPending) {
-                return `
-                    <div class="text-left bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 shadow-inner">
-                        <div class="text-base md:text-lg font-extrabold text-amber-400 truncate">${label}</div>
-                        <div class="mt-2 text-xs text-cyan-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-notch fa-spin"></i> Sedang memproses kode, mohon tunggu...
-                        </div>
-                    </div>`;
-            }
             return `
                 <div class="text-left bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 shadow-inner">
                     <div class="text-base md:text-lg font-extrabold text-amber-400 truncate">${label}</div>
-                    <div class="mt-2 text-xs text-slate-400">Hubungi admin untuk klaim.</div>
+                    <div class="mt-2 text-xs text-cyan-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Sedang memproses kode, cek juga di Riwayat Hadiah...
+                    </div>
                 </div>`;
         }
         if (w.codes.length === 1) {
@@ -3083,7 +3085,273 @@
     });
 })();
 </script>
-  <script>
+
+<script>
+/* =====================================================================
+ * APPEND-ONLY PATCH 4: TAMPILKAN KODE + STATUS CLAIM DI RIWAYAT HADIAH
+ * ---------------------------------------------------------------------
+ * - recordWinner() sekarang menyimpan field `code`, `claimed`, `claimedAt`
+ *   di tiap entri riwayat (lihat override di bawah).
+ * - renderHistory() (di-override total) menampilkan salah satu dari:
+ *     1. Kode aktif + tombol salin (kalau item.code ada & belum claimed).
+ *     2. "Kode sedang diproses..." (kalau item.code masih kosong).
+ *     3. "Hadiahnya Sudah Kamu Claim dd/mm/yy h:m" (kalau item.claimed).
+ * - updateHistoryCodeForPrize() dipanggil dari PATCH 2 begitu kode
+ *   selesai direservasi, untuk menyambungkan kode ke baris riwayat yang
+ *   masih menunggu.
+ * - Berkala mengecek ke server (action=checkCode, sudah ada di Code.gs)
+ *   apakah kode yang tercatat di riwayat masih valid. Kalau server bilang
+ *   valid=false (artinya sudah di-redeem lewat testp.html), baris riwayat
+ *   itu otomatis ditandai claimed dengan waktu klaimnya.
+ * ===================================================================== */
+(function () {
+    // Format tanggal klaim: dd/mm/yy h:m
+    window.formatTanggalKlaim = function (ts) {
+        const d = new Date(ts);
+        const pad2 = n => String(n).padStart(2, '0');
+        return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${String(d.getFullYear()).slice(-2)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    };
+
+    // Override recordWinner: sekarang menyimpan code/claimed/claimedAt.
+    window.recordWinner = function (prize) {
+        const record = {
+            id: Date.now() + Math.random(),
+            name: prize.name,
+            color: prize.color,
+            code: prize.code || '',
+            claimed: false,
+            claimedAt: null,
+            time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+            date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+        };
+        history.unshift(record);
+        if (history.length > 50) history.pop();
+        saveHistory();
+        renderHistory();
+        updateStats();
+    };
+
+    // Hubungkan kode yang baru selesai direservasi ke baris riwayat yang
+    // masih menunggu (name sama, code masih kosong, belum claimed).
+    window.updateHistoryCodeForPrize = function (prizeName, kode) {
+        if (!Array.isArray(history)) return;
+        const target = history.find(h => h.name === prizeName && !h.code && !h.claimed);
+        if (target) {
+            target.code = kode;
+            saveHistory();
+            renderHistory();
+        }
+    };
+
+    // Override renderHistory: tampilkan kode / status pending / status claimed.
+    window.renderHistory = function () {
+        const container = document.getElementById('history-list');
+        if (!container) return;
+        if (history.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12 text-slate-500 text-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-600 text-lg">
+                        <i class="fa-solid fa-hourglass-start"></i>
+                    </div>
+                    Belum ada riwayat spin. Ayo putar rodanya sekarang!
+                </div>
+            `;
+            return;
+        }
+
+        // Gabungkan entri riwayat yang BERURUTAN (mis. hasil dari 1x tekan
+        // "Multi Spin", tiap kemenangan tercatat satu-satu tapi jadi
+        // beruntun di array yang sama) dan nama hadiahnya SAMA, jadi SATU
+        // baris ringkasan di Riwayat Hadiah -- bukan baris berulang-ulang.
+        // Kalau nama hadiahnya diakhiri angka (mis. "NFCash 8"), angkanya
+        // DIJUMLAHKAN jadi totalnya (menang 3x -> "NFCash 24"), TANPA
+        // embel-embel "(x3)" di belakangnya (sesuai permintaan, supaya
+        // tidak membingungkan dengan angka yang sudah ada di nama hadiah).
+        const groups = [];
+        history.forEach(item => {
+            const last = groups[groups.length - 1];
+            if (last && last.name === item.name) {
+                last.items.push(item);
+            } else {
+                groups.push({ name: item.name, items: [item] });
+            }
+        });
+
+        container.innerHTML = groups.map(group => {
+            const items = group.items;
+            const first = items[0]; // paling baru (history urut terbaru -> terlama)
+            const count = items.length;
+
+            let displayName = group.name;
+            if (count > 1) {
+                const m = String(group.name).match(/^(.*?)(\d+(?:[.,]\d+)?)\s*$/);
+                if (m) {
+                    const angka = parseFloat(m[2].replace(',', '.'));
+                    if (!isNaN(angka)) displayName = `${m[1].trim()} ${angka * count}`.trim();
+                }
+            }
+
+            // Kalau beberapa kemenangan yang digabung ini ternyata punya
+            // KODE YANG SAMA PERSIS (karena sistem kode memang menyatukan
+            // satu kode untuk hadiah dengan nama yang sama), tampilkan
+            // kodenya cuma SEKALI, jangan diulang-ulang.
+            const codesToClaimRaw = items.filter(i => i.code && !i.claimed);
+            const seenCodes = new Set();
+            const codesToClaim = codesToClaimRaw.filter(i => {
+                if (seenCodes.has(i.code)) return false;
+                seenCodes.add(i.code);
+                return true;
+            });
+            const pendingItems = items.filter(i => !i.code && !i.claimed);
+            const claimedItems = items.filter(i => i.claimed);
+            const kodeAreaParts = [];
+
+            if (codesToClaim.length === 1) {
+                const kode = codesToClaim[0].code;
+                kodeAreaParts.push(`
+                    <div class="mt-2 flex items-center gap-2">
+                        <code class="text-emerald-400 text-[11px] font-mono font-bold bg-slate-950/70 px-2 py-1 rounded-lg border border-slate-800">${escapeHtml(kode)}</code>
+                        <button onclick="copyCode('${escapeHtml(kode).replace(/'/g, "\\'")}')" class="text-[10px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded-lg transition"><i class="fa-solid fa-copy"></i></button>
+                    </div>`);
+            } else if (codesToClaim.length > 1) {
+                const daftarKode = codesToClaim.map(i => `
+                    <div class="flex items-center justify-between bg-slate-950/70 rounded-lg px-2 py-1 border border-slate-800">
+                        <code class="text-emerald-400 text-[11px] font-mono font-bold">${escapeHtml(i.code)}</code>
+                        <button onclick="copyCode('${escapeHtml(i.code).replace(/'/g, "\\'")}')" class="text-[10px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded-lg transition"><i class="fa-solid fa-copy"></i></button>
+                    </div>`).join('');
+                kodeAreaParts.push(`
+                    <div class="mt-2 space-y-1.5">
+                        <div class="text-[10px] text-slate-400">Tukar ${codesToClaim.length} kode ini untuk dapat totalnya:</div>
+                        ${daftarKode}
+                    </div>`);
+            }
+
+            if (pendingItems.length > 0) {
+                kodeAreaParts.push(`
+                    <div class="mt-2 text-[11px] text-cyan-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <span>${pendingItems.length > 1 ? pendingItems.length + ' kode sedang diproses' : 'Kode sedang diproses'}, akan muncul otomatis di sini...</span>
+                    </div>`);
+            }
+
+            if (claimedItems.length > 0) {
+                const lastClaimedAt = Math.max(...claimedItems.map(i => i.claimedAt || 0));
+                kodeAreaParts.push(`
+                    <div class="mt-2 text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>${claimedItems.length === count ? 'Hadiahnya Sudah Kamu Claim' : claimedItems.length + ' Sudah Kamu Claim'} ${formatTanggalKlaim(lastClaimedAt)}</span>
+                    </div>`);
+            }
+
+            const kodeArea = kodeAreaParts.join('');
+            const badgeText = count > 1 ? `${count}x Menang` : 'Menang';
+
+            return `
+                <div class="p-3.5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700 transition text-sm shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3.5 min-w-0">
+                            <div class="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm" style="background-color: ${first.color}"></div>
+                            <div class="min-w-0">
+                                <span class="font-bold text-white block truncate">${escapeHtml(displayName)}</span>
+                                <span class="text-[10px] text-slate-400 font-medium">${first.date} &middot; ${first.time}</span>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[11px] font-bold shrink-0 ml-2">${badgeText}</span>
+                    </div>
+                    ${kodeArea}
+                </div>`;
+        }).join('');
+    };
+
+    // Cek status semua kode di riwayat yang belum ditandai claimed, lewat
+    // action=checkCode (read-only, sudah ada di Code.gs). Kalau server
+    // bilang kode itu sudah tidak valid lagi (artinya sudah di-redeem),
+    // tandai baris riwayatnya sebagai claimed dengan waktu sekarang.
+    // SINKRON LANGSUNG SETELAH CLAIM DARI testpnew.html.
+    // Event storage diterima oleh tab/jendela lain dengan origin yang sama,
+    // sehingga status berubah tanpa menunggu polling 45 detik atau reload.
+    function terapkanEventClaimLangsung(eventData) {
+        if (!eventData || !Array.isArray(history)) return false;
+
+        const eventUsername = String(eventData.username || '').trim();
+        const currentUser = String(currentUsername() || '').trim();
+        const code = String(eventData.code || '').trim();
+
+        if (!code || (eventUsername && currentUser && eventUsername !== currentUser)) {
+            return false;
+        }
+
+        const target = history.find(h =>
+            String(h.code || '').trim().toUpperCase() === code.toUpperCase() &&
+            !h.claimed
+        );
+
+        if (!target) return false;
+
+        target.claimed = true;
+        target.claimedAt = Number(eventData.claimedAt) || Date.now();
+        saveHistory();
+        renderHistory();
+        return true;
+    }
+
+    window.addEventListener('storage', function (event) {
+        if (!event.key || !event.key.startsWith('nefa_claim_event_') || !event.newValue) return;
+
+        try {
+            const data = JSON.parse(event.newValue);
+            if (terapkanEventClaimLangsung(data)) {
+                console.log('[NEFA] Status claim diperbarui langsung:', data.code);
+            }
+        } catch (e) {
+            console.warn('[NEFA] Event claim tidak valid:', e);
+        }
+    });
+
+    async function syncStatusKlaimRiwayat() {
+        if (!SHEET_WRITE_URL || !Array.isArray(history)) return;
+        const perluCek = history.filter(h => h.code && !h.claimed);
+        if (perluCek.length === 0) return;
+
+        let adaPerubahan = false;
+        for (const item of perluCek) {
+            try {
+                const url = SHEET_WRITE_URL + '?action=checkCode&code=' + encodeURIComponent(item.code) + '&t=' + Date.now();
+                const result = await nefaBgRead(url, 15000, 'checkcode');
+                if (result && result.success && result.valid === false) {
+                    item.claimed = true;
+                    item.claimedAt = Date.now();
+                    adaPerubahan = true;
+                }
+            } catch (e) {
+                // gagal cek -- coba lagi di siklus berikutnya, tidak fatal.
+            }
+        }
+        if (adaPerubahan) {
+            saveHistory();
+            renderHistory();
+        }
+    }
+
+    setInterval(() => {
+        if (document.visibilityState === 'visible') syncStatusKlaimRiwayat();
+    }, 45000);
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(syncStatusKlaimRiwayat, 3000);
+    } else {
+        document.addEventListener('DOMContentLoaded', () => setTimeout(syncStatusKlaimRiwayat, 3000));
+    }
+
+    // Render ulang riwayat sekarang (kalau app sudah start & ada data
+    // tersimpan dari sesi sebelumnya) supaya field baru (claimed dll)
+    // langsung terpakai tanpa perlu spin baru.
+    if (typeof history !== 'undefined' && Array.isArray(history) && document.getElementById('history-list')) {
+        try { renderHistory(); } catch (e) {}
+    }
+})();
+</script>
+    <script>
         /* =========================
            NEWBIEFAMS PROTECTION
            MOBILE SAFE VERSION
