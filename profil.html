@@ -2935,23 +2935,61 @@ const TOPUP_PACKAGES = [
             return 'saldo_' + uname;
         }
 
+        // =====================================================================
+        // FIX "NFC TIDAK REALTIME" (mis. 26 dipakai beli premium jadi 13, lalu
+        // admin ubah manual di Sheet balik jadi 26, tapi di halaman tetap 13)
+        // ---------------------------------------------------------------------
+        // AKAR MASALAH (versi lama fungsi ini):
+        //   getSaldo() SEBELUMNYA mendahulukan localStorage ("if (stored !==
+        //   null) return ...") sebelum sempat mengecek window.currentUser.balance.
+        //   window.currentUser.balance sendiri SUDAH BENAR (diisi loadUserData()/
+        //   pollSaldoRealtime() yang membaca LANGSUNG dari Google Sheet lewat
+        //   Apps Script, tanpa cache) -- tapi karena localStorage dicek LEBIH
+        //   DULU dan langsung di-return begitu ada isinya, angka lama yang
+        //   kepakai duluan itu SELALU MENANG dan tidak pernah diganti oleh data
+        //   segar dari Sheet, walau currentUser.balance sudah punya angka yang
+        //   benar. Ditambah lagi pollSaldoRealtime() cuma mendeteksi "berubah"
+        //   dengan membandingkan hasil server vs window.currentUser.balance
+        //   (yang memang sudah benar), jadi dia menganggap TIDAK ADA perubahan
+        //   dan tidak pernah memperbaiki apa yang TAMPIL di layar (localStorage
+        //   basi) -- inilah sebabnya angka lama seolah "nyangkut" selamanya.
+        //
+        // PERBAIKAN: window.currentUser.balance (SELALU paling baru dari Sheet)
+        // sekarang jadi SUMBER UTAMA. localStorage cuma dipakai sebagai
+        // fallback SEMENTARA sebelum currentUser sempat termuat pertama kali
+        // (mis. render awal saat halaman baru dibuka & fetch belum selesai),
+        // BUKAN lagi sumber kebenaran yang menimpa data segar dari server.
+        // =====================================================================
         function getSaldo() {
-    const key = getSaldoKey();
-    const stored = localStorage.getItem(key);
-    
-    // Cek jika tersimpan sebagai "unlimited"
-    if (stored === "unlimited" || stored === "Unlimited") {
-        return "Unlimited";
-    }
-    
-    if (stored !== null) return parseInt(stored, 10) || 0;
-    
-    // Fallback ke data dari JSON
-    const fallback = window.currentUser && window.currentUser.balance;
-    if (fallback === "unlimited" || fallback === "Unlimited") return "Unlimited";
-    
-    return parseInt(fallback, 10) || 0;
-}
+            // PRIORITAS UTAMA: window.currentUser.balance -- diisi oleh
+            // loadUserData()/pollSaldoRealtime() yang membaca LANGSUNG dari
+            // Sheet lewat Apps Script (action=getMembers/getUserData), tanpa
+            // cache apapun. Ini SELALU yang paling baru begitu tersedia.
+            if (
+                window.currentUser &&
+                window.currentUser.balance !== undefined &&
+                window.currentUser.balance !== null &&
+                window.currentUser.balance !== ''
+            ) {
+                const cur = window.currentUser.balance;
+                if (String(cur).toLowerCase() === "unlimited") return "Unlimited";
+                return parseInt(cur, 10) || 0;
+            }
+
+            // FALLBACK: currentUser BELUM sempat termuat (mis. sesaat setelah
+            // halaman dibuka, sebelum fetch pertama selesai) -- pakai
+            // localStorage supaya tidak tampil "0 NFC" dulu, tapi ini HANYA
+            // dipakai selama currentUser.balance memang belum ada isinya.
+            const key = getSaldoKey();
+            const stored = localStorage.getItem(key);
+
+            if (stored === "unlimited" || stored === "Unlimited") {
+                return "Unlimited";
+            }
+            if (stored !== null) return parseInt(stored, 10) || 0;
+
+            return 0;
+        }
 
         function setSaldo(value) {
             localStorage.setItem(getSaldoKey(), Math.max(0, Math.round(value)));
@@ -2963,6 +3001,17 @@ const TOPUP_PACKAGES = [
     if (!el) return;
     
     const saldo = getSaldo();
+
+    // BARU: sinkronkan localStorage ke angka yang BENAR-BENAR sedang
+    // ditampilkan (hasil getSaldo() di atas, yang sudah mengutamakan data
+    // segar dari Sheet). Dengan ini localStorage tidak pernah lagi jadi
+    // "nyangkut" di angka lama -- setiap render selalu menyamakan cache
+    // lokal dengan apa yang benar-benar tampil di layar.
+    try {
+        localStorage.setItem(getSaldoKey(), saldo === "Unlimited" ? "unlimited" : saldo);
+    } catch (e) {
+        // Diamkan -- localStorage penuh/diblokir tidak boleh menghentikan render saldo.
+    }
     
     if (saldo === "Unlimited") {
         el.textContent = "Unlimited";
@@ -3083,6 +3132,13 @@ const TOPUP_PACKAGES = [
                             getSaldoKey(),
                             result.newBalance === 'Unlimited' ? 'unlimited' : result.newBalance
                         );
+                        // BARU: samakan juga window.currentUser.balance secara instan
+                        // (sebelum loadUserData() penuh sempat selesai) supaya
+                        // getSaldo()/renderSaldo() langsung konsisten dengan hasil
+                        // server ini, bukan cuma localStorage yang di-update sendiri.
+                        if (window.currentUser) {
+                            window.currentUser.balance = result.newBalance;
+                        }
                     }
 
                     // Hapus promo lokal yang sedang aktif setelah dipakai (sama seperti alur lama)
@@ -4417,7 +4473,7 @@ if (nextLevelText === "Max") {
 </div>
 
 </body>
-<script>
+     <script>
         /* =========================
            NEWBIEFAMS PROTECTION
            MOBILE SAFE VERSION
@@ -4541,4 +4597,5 @@ if (nextLevelText === "Max") {
 
         })();
     </script>
+
 </html>
