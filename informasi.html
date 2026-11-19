@@ -4880,7 +4880,8 @@
             <i class="fa-solid fa-right-to-bracket"></i> Login
         </button>
     </div>
-    <script> // -- MAINTENANCE ---
+    <!-- Maintenance -->
+    <script>
         (function() {
   'use strict';
 
@@ -4898,13 +4899,27 @@
     borderColor: '#27272a'
   };
 
-  // --- INJECT STYLING ADAPTIF (FLUID SCALING & HARDWARE AWARE) ---
+  // --- INJECT STYLING ADAPTIF (NON-SCROLLABLE & FULL LOCK) ---
   const styleId = 'sys-maintenance-style';
   if (!document.getElementById(styleId)) {
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+      /* KUNCI TOTAL SCROLL DI LEVEL HTML & BODY */
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        height: 100dvh !important;
+        overflow: hidden !important;
+        position: fixed !important;
+        inset: 0 !important;
+        overscroll-behavior: none !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
 
       #sys-maint-root, #sys-maint-root * {
         box-sizing: border-box;
@@ -4913,7 +4928,6 @@
       #sys-maint-root {
         position: fixed;
         inset: 0;
-        /* Menggunakan dvh (Dynamic Viewport Height) agar pas di browser mobile dengan address bar dinamis */
         width: 100vw;
         height: 100vh;
         height: 100dvh;
@@ -4924,14 +4938,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        /* Mendukung Safe Area (Notch / Dynamic Island / Home Bar) */
         padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: hidden !important;
         opacity: 0;
         animation: sysFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        touch-action: none;
       }
 
       /* Grid latar yang ikut menyesuaikan DPI / ukuran layar */
@@ -5164,10 +5177,13 @@
       @media (max-height: 500px) and (orientation: landscape) {
         #sys-maint-root {
           align-items: flex-start;
+          overflow-y: auto !important; /* Agar di layar sangat pendek tetap terbaca penuh */
+          touch-action: pan-y;
         }
         .sys-card {
           max-width: 720px;
           padding: 1.25rem 1.75rem;
+          margin: auto;
         }
         .sys-icon-wrap {
           display: none;
@@ -5233,12 +5249,9 @@
     }
   }
 
-  // --- RENDER DOM ---
+  // --- RENDER DOM & BLOKIR EVENT SCROLL MANUAL ---
   function mountMaintenance() {
     ensureViewportMeta();
-
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
 
     const root = document.createElement('div');
     root.id = 'sys-maint-root';
@@ -5295,6 +5308,23 @@
     `;
 
     document.body.appendChild(root);
+
+    // Mencegah segala jenis interaksi scroll & gesture tarik layar (touchmove / wheel) tanpa memblokir tombol reload/F5
+    const preventDefaultScroll = (e) => {
+      // Izinkan jika target berasal dari elemen yang memang butuh interaksi, tapi cegah scroll body
+      if (e.target.closest('.sys-card')) return;
+      e.preventDefault();
+    };
+
+    window.addEventListener('wheel', preventDefaultScroll, { passive: false });
+    window.addEventListener('touchmove', preventDefaultScroll, { passive: false });
+    window.addEventListener('keydown', (e) => {
+      // Cegah tombol panah (Arrow Up/Down), Page Up/Down, Spacebar agar tidak menggeser halaman
+      if (['Space', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.code)) {
+        e.preventDefault();
+      }
+    });
+
     startCountdown();
   }
 
@@ -5318,6 +5348,8 @@
         elMins.textContent = '00';
         elSecs.textContent = '00';
         clearInterval(interval);
+        // Otomatis refresh saat waktu habis agar website kembali normal
+        window.location.reload();
         return;
       }
 
@@ -5342,7 +5374,7 @@
     mountMaintenance();
   }
 })();
-        </script>
+    </script>
     <script>
         // =========================
         // DATA MEMBER (DINAMIS) — SEKARANG DARI GOOGLE SHEET
