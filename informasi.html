@@ -4880,6 +4880,469 @@
             <i class="fa-solid fa-right-to-bracket"></i> Login
         </button>
     </div>
+    <script> // -- MAINTENANCE ---
+        (function() {
+  'use strict';
+
+  // --- KONFIGURASI UTAMA ---
+  const CONFIG = {
+    // Format ISO: YYYY-MM-DDTHH:mm:ss+07:00 (WIB)
+    targetDate: '2026-11-20T21:00:00+07:00', 
+    title: 'Pembaruan Sistem Sedang Berlangsung',
+    subtitle: 'Admin Sedang Melakukan Perbaruian Tampilan & Fitur Website',
+    statusText: 'SYSTEM UPDATE IN PROGRESS',
+    contactEmail: 'botzenustudio@gmail.com',
+    accentColor: '#3b82f6',
+    bgColor: '#09090b',
+    cardColor: '#121215',
+    borderColor: '#27272a'
+  };
+
+  // --- INJECT STYLING ADAPTIF (FLUID SCALING & HARDWARE AWARE) ---
+  const styleId = 'sys-maintenance-style';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+      #sys-maint-root, #sys-maint-root * {
+        box-sizing: border-box;
+      }
+
+      #sys-maint-root {
+        position: fixed;
+        inset: 0;
+        /* Menggunakan dvh (Dynamic Viewport Height) agar pas di browser mobile dengan address bar dinamis */
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        z-index: 2147483647;
+        background-color: ${CONFIG.bgColor};
+        color: #f4f4f5;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Mendukung Safe Area (Notch / Dynamic Island / Home Bar) */
+        padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+        overflow-y: auto;
+        overflow-x: hidden;
+        opacity: 0;
+        animation: sysFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Grid latar yang ikut menyesuaikan DPI / ukuran layar */
+      #sys-maint-root::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: 
+          linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: clamp(28px, 3vw, 56px) clamp(28px, 3vw, 56px);
+        mask-image: radial-gradient(circle at center, black 35%, transparent 90%);
+        -webkit-mask-image: radial-gradient(circle at center, black 35%, transparent 90%);
+        pointer-events: none;
+      }
+
+      /* Ambient Top Glow responsif */
+      .sys-glow {
+        position: fixed;
+        top: -15vh;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(90vw, 750px);
+        height: min(50vh, 450px);
+        background: radial-gradient(circle, ${CONFIG.accentColor}26 0%, transparent 70%);
+        filter: blur(clamp(40px, 5vw, 80px));
+        pointer-events: none;
+      }
+
+      /* Card utama dengan Fluid Width & Padding (HP 320px -> Monitor 4K) */
+      .sys-card {
+        position: relative;
+        width: 100%;
+        max-width: clamp(320px, 90vw, 620px);
+        background: ${CONFIG.cardColor};
+        border: 1px solid ${CONFIG.borderColor};
+        border-radius: clamp(12px, 1.5vw, 20px);
+        padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 3.5vw, 2.75rem);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+        text-align: center;
+        margin: auto;
+        transform: translateY(16px);
+        animation: sysSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+      }
+
+      /* Status Pill */
+      .sys-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: clamp(5px, 0.8vw, 7px) clamp(12px, 1.5vw, 16px);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid ${CONFIG.borderColor};
+        border-radius: 9999px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: clamp(0.68rem, 0.9vw, 0.8rem);
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        color: #a1a1aa;
+        margin-bottom: clamp(1.25rem, 2.5vw, 2rem);
+      }
+
+      .sys-pulse {
+        width: clamp(6px, 0.7vw, 9px);
+        height: clamp(6px, 0.7vw, 9px);
+        border-radius: 50%;
+        background-color: ${CONFIG.accentColor};
+        box-shadow: 0 0 0 0 ${CONFIG.accentColor};
+        animation: sysPulseAnim 2s infinite;
+        flex-shrink: 0;
+      }
+
+      /* Icon Container */
+      .sys-icon-wrap {
+        width: clamp(46px, 5vw, 64px);
+        height: clamp(46px, 5vw, 64px);
+        margin: 0 auto clamp(1rem, 2vw, 1.5rem);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid ${CONFIG.borderColor};
+        border-radius: clamp(10px, 1.2vw, 16px);
+        color: ${CONFIG.accentColor};
+      }
+
+      .sys-icon-wrap svg {
+        width: clamp(22px, 2.4vw, 30px);
+        height: clamp(22px, 2.4vw, 30px);
+      }
+
+      .sys-gear-spin {
+        animation: sysSpinSlow 14s linear infinite;
+        transform-origin: center;
+      }
+
+      /* Fluid Typography */
+      .sys-title {
+        font-size: clamp(1.3rem, 2.5vw, 1.95rem);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        line-height: 1.25;
+        margin: 0 0 clamp(0.6rem, 1.2vw, 0.85rem);
+        color: #ffffff;
+      }
+
+      .sys-desc {
+        font-size: clamp(0.875rem, 1.15vw, 1.05rem);
+        line-height: 1.6;
+        color: #a1a1aa;
+        margin: 0 auto clamp(1.5rem, 3vw, 2.25rem);
+        max-width: 48ch;
+      }
+
+      /* Countdown Grid */
+      .sys-timer-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: clamp(0.5rem, 1.2vw, 1rem);
+        margin-bottom: clamp(1.5rem, 2.5vw, 2.25rem);
+      }
+
+      .sys-time-box {
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid ${CONFIG.borderColor};
+        border-radius: clamp(8px, 1vw, 14px);
+        padding: clamp(0.75rem, 1.8vw, 1.25rem) clamp(0.25rem, 0.8vw, 0.75rem);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: border-color 0.3s ease;
+      }
+
+      @media (hover: hover) {
+        .sys-time-box:hover {
+          border-color: rgba(255, 255, 255, 0.22);
+        }
+      }
+
+      .sys-time-val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: clamp(1.25rem, 2.6vw, 2.1rem);
+        font-weight: 700;
+        color: #ffffff;
+        line-height: 1.1;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .sys-time-label {
+        font-size: clamp(0.62rem, 0.85vw, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #71717a;
+        margin-top: clamp(0.3rem, 0.6vw, 0.5rem);
+        font-weight: 600;
+      }
+
+      /* Progress Bar */
+      .sys-progress-container {
+        width: 100%;
+        height: clamp(3px, 0.4vw, 5px);
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 99px;
+        overflow: hidden;
+        margin-bottom: clamp(1.25rem, 2.2vw, 1.85rem);
+      }
+
+      .sys-progress-bar {
+        height: 100%;
+        width: 35%;
+        background: linear-gradient(90deg, transparent, ${CONFIG.accentColor}, transparent);
+        border-radius: 99px;
+        animation: sysIndeterminate 2.2s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+      }
+
+      /* Footer */
+      .sys-footer {
+        border-top: 1px solid ${CONFIG.borderColor};
+        padding-top: clamp(1rem, 1.8vw, 1.4rem);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        font-size: clamp(0.75rem, 0.95vw, 0.875rem);
+        color: #71717a;
+      }
+
+      .sys-footer a {
+        color: #d4d4d8;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+        word-break: break-all;
+      }
+
+      .sys-footer a:hover {
+        color: ${CONFIG.accentColor};
+      }
+
+      /* Keyframes */
+      @keyframes sysFadeIn { to { opacity: 1; } }
+      @keyframes sysSlideUp { to { transform: translateY(0); } }
+      @keyframes sysSpinSlow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes sysPulseAnim {
+        0% { box-shadow: 0 0 0 0 ${CONFIG.accentColor}99; }
+        70% { box-shadow: 0 0 0 8px rgba(0, 0, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+      }
+      @keyframes sysIndeterminate {
+        0% { transform: translateX(-150%); }
+        100% { transform: translateX(350%); }
+      }
+
+      /* Penyesuaian Layar Sangat Kecil (< 360px) */
+      @media (max-width: 359px) {
+        .sys-timer-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .sys-footer {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+
+      /* Penyesuaian Mode Landscape pada HP / Layar Pendek (tinggi < 500px) */
+      @media (max-height: 500px) and (orientation: landscape) {
+        #sys-maint-root {
+          align-items: flex-start;
+        }
+        .sys-card {
+          max-width: 720px;
+          padding: 1.25rem 1.75rem;
+        }
+        .sys-icon-wrap {
+          display: none;
+        }
+        .sys-badge {
+          margin-bottom: 0.75rem;
+        }
+        .sys-desc {
+          margin-bottom: 1rem;
+        }
+        .sys-timer-grid {
+          margin-bottom: 1rem;
+        }
+        .sys-progress-container {
+          margin-bottom: 0.85rem;
+        }
+      }
+
+      /* Penyesuaian Monitor Ultra-Wide & Layar Besar (2K / 4K / TV >= 1920px) */
+      @media (min-width: 1920px) {
+        .sys-card {
+          max-width: 720px;
+          padding: 3.5rem 3.25rem;
+        }
+        .sys-title {
+          font-size: 2.25rem;
+        }
+        .sys-desc {
+          font-size: 1.125rem;
+        }
+        .sys-time-val {
+          font-size: 2.4rem;
+        }
+      }
+
+      /* Aksesibilitas Hardware: Hormati pengaturan "Reduce Motion" di OS/Perangkat */
+      @media (prefers-reduced-motion: reduce) {
+        #sys-maint-root, .sys-card, .sys-gear-spin, .sys-pulse, .sys-progress-bar {
+          animation: none !important;
+          opacity: 1 !important;
+          transform: none !important;
+        }
+        .sys-progress-bar {
+          width: 100%;
+          background: ${CONFIG.accentColor};
+          opacity: 0.6;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // --- INJECT META VIEWPORT JIKA BELUM ADA (AGAR TIDAK ZOOM OUT DI MOBILE) ---
+  function ensureViewportMeta() {
+    let meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, initial-scale=1.0, viewport-fit=cover';
+      document.head.appendChild(meta);
+    } else if (!meta.content.includes('viewport-fit=cover')) {
+      meta.content += ', viewport-fit=cover';
+    }
+  }
+
+  // --- RENDER DOM ---
+  function mountMaintenance() {
+    ensureViewportMeta();
+
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    const root = document.createElement('div');
+    root.id = 'sys-maint-root';
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.setAttribute('aria-labelledby', 'sys-maint-title');
+
+    root.innerHTML = `
+      <div class="sys-glow"></div>
+      <div class="sys-card">
+        <div class="sys-badge">
+          <span class="sys-pulse"></span>
+          <span>${CONFIG.statusText}</span>
+        </div>
+
+        <div class="sys-icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="sys-gear-spin">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+
+        <h1 class="sys-title" id="sys-maint-title">${CONFIG.title}</h1>
+        <p class="sys-desc">${CONFIG.subtitle}</p>
+
+        <div class="sys-timer-grid" id="sys-timer-box" role="timer" aria-live="off">
+          <div class="sys-time-box">
+            <span class="sys-time-val" id="sys-days">00</span>
+            <span class="sys-time-label">Hari</span>
+          </div>
+          <div class="sys-time-box">
+            <span class="sys-time-val" id="sys-hours">00</span>
+            <span class="sys-time-label">Jam</span>
+          </div>
+          <div class="sys-time-box">
+            <span class="sys-time-val" id="sys-mins">00</span>
+            <span class="sys-time-label">Menit</span>
+          </div>
+          <div class="sys-time-box">
+            <span class="sys-time-val" id="sys-secs">00</span>
+            <span class="sys-time-label">Detik</span>
+          </div>
+        </div>
+
+        <div class="sys-progress-container" aria-hidden="true">
+          <div class="sys-progress-bar"></div>
+        </div>
+
+        <div class="sys-footer">
+          <span>Estimasi selesai otomatis</span>
+          <a href="mailto:${CONFIG.contactEmail}">${CONFIG.contactEmail}</a>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(root);
+    startCountdown();
+  }
+
+  // --- LOGIKA COUNTDOWN REAL-TIME ---
+  function startCountdown() {
+    const targetTime = new Date(CONFIG.targetDate).getTime();
+    const elDays = document.getElementById('sys-days');
+    const elHours = document.getElementById('sys-hours');
+    const elMins = document.getElementById('sys-mins');
+    const elSecs = document.getElementById('sys-secs');
+
+    const pad = (num) => String(num).padStart(2, '0');
+
+    function update() {
+      const now = Date.now();
+      const diff = targetTime - now;
+
+      if (diff <= 0) {
+        elDays.textContent = '00';
+        elHours.textContent = '00';
+        elMins.textContent = '00';
+        elSecs.textContent = '00';
+        clearInterval(interval);
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / 1000 / 60) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+
+      elDays.textContent = pad(days);
+      elHours.textContent = pad(hours);
+      elMins.textContent = pad(mins);
+      elSecs.textContent = pad(secs);
+    }
+
+    update();
+    const interval = setInterval(update, 1000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountMaintenance);
+  } else {
+    mountMaintenance();
+  }
+})();
+        </script>
     <script>
         // =========================
         // DATA MEMBER (DINAMIS) — SEKARANG DARI GOOGLE SHEET
